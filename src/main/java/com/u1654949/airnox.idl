@@ -1,0 +1,108 @@
+module com {
+
+    module u1654949 {
+
+        module corba{
+
+            module common {
+
+                struct NoxReading {
+                    long long time;
+                    long reading_value;
+                };
+
+                struct MSData {
+                    string region;
+                    string station_name;
+                    long alarm_level;
+                };
+
+                struct TLSData {
+                    string tls_name;
+                    MSData stationData;
+                };
+
+                struct Alarm {
+                    TLSData data;
+                    NoxReading reading;
+                };
+
+                typedef sequence<NoxReading> Nox_Readings;
+                typedef sequence<Alarm> Alarms;
+                typedef sequence<string> Region;                            
+                typedef sequence<MSData> Stations;
+                typedef sequence<string> TLS_List;
+            };
+
+            module ms {
+                interface TMS {
+                    readonly attribute string station_name;
+                    readonly attribute string location;
+
+                    boolean deactivate();
+                    boolean activate();
+                    void reset();
+
+                    void send_alarm(in long measurement);
+
+                    common::NoxReading  get_reading();
+                    common::Nox_Readings get_reading_log();
+                };
+            };
+
+            module ls {
+
+                interface TLS {
+                    readonly attribute string name;
+                    readonly attribute common::Alarms alarm_log;
+
+                    boolean ping();
+
+                    common::Alarms get_current_state();
+                    common::Stations get_registered_tms();
+                    common::MSData register_tms(in string region);
+
+                    void receive_alarm(in common::Alarm new_alarm);
+                    boolean remove_tms(in common::MSData data);
+                };
+
+            };
+
+            module mc {
+
+                interface MCC {
+                    readonly attribute string id;
+
+                    void add_alarm(in common::Alarm new_alarm);
+                    void remove_alarm(in common::TLSData tls_data);
+
+                    common::TLS_List get_tls_list();
+                };
+
+                interface MCS {
+                    readonly attribute string name;
+
+                    boolean ping();
+
+                    void cancel_alarm(in common::TLSData tls_data);
+                    void receive_alarm(in common::Alarm new_alarm);
+
+                    boolean register_mcc(in string id);
+                    boolean remove_mcc(in string id);
+
+                    boolean register_tls_connection(in string name);
+                    boolean remove_tls_connection(in string name);
+
+                    common::Alarms get_alarms(in string id);
+                    common::Alarms get_region_state(in string region);
+                    common::TLS_List get_known_stations();
+                    ls::TLS get_connected_tls(in string name);
+                };
+
+            };
+
+        };
+
+    };
+
+};
