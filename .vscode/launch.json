@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TLSServer<airnox_repository_c6e1c3f7>",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.ls.TLSServer",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TMCServer<airnox_repository_c6e1c3f7>",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.mc.TMCServer",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TMSDriver<airnox_repository_c6e1c3f7>",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.ms.TMSDriver",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        }
+    ]
+}
