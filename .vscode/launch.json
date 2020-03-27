@@ -6,6 +6,38 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - TMC",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.mc.TMC",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TMS",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.ms.TMS",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TLS",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.ls.TLS",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TLSDriver",
+            "request": "launch",
+            "mainClass": "com.u1654949.airnox.ls.TLSDriver",
+            "projectName": "airnox_repository_c6e1c3f7",
+            "args": "-ORBInitRef.NameService=file:/home/sudwoffendin/git/airnox_repository/nameserver.ior"
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
             "mainClass": "${file}",

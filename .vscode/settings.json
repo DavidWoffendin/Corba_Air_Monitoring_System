@@ -1,0 +1,13 @@
+{
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "/home/sudwoffendin/jacorb-3.9/**/*.jar",
+            "/home/sudwoffendin/git/jackson-core/**/*.jar",
+            "/home/sudwoffendin/git/jackson-databind/**/*.jar"
+        ],
+        "exclude": [
+            "/home/sudwoffendin/jacorb-3.9/lib/antlr-2.7.2.jar"
+        ]
+    }
+}
