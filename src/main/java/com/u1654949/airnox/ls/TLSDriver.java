@@ -1,9 +1,12 @@
 package com.u1654949.airnox.ls;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.u1654949.airnox.common.Constants;
@@ -33,6 +36,7 @@ public class TLSDriver extends TLSPOA {
     private static final Logger logger = LoggerFactory.getLogger(TLS.class);
 
     private static final ConcurrentHashMap<String, ConcurrentHashMap<String, NoxReading>> regionMapping = new ConcurrentHashMap<>();
+    private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
     private static final List<Alarm> alarmLog = new ArrayList<>();
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -102,8 +106,7 @@ public class TLSDriver extends TLSPOA {
      * @return the String name
      */
     @Override
-    public String name() {
-        server.ping();   
+    public String name() {         
         return name;
     }
 
@@ -124,14 +127,25 @@ public class TLSDriver extends TLSPOA {
 
     @Override
     public Alarm[] get_current_state() {
-        // TODO Auto-generated method stub
-        return null;
+        List<Alarm> currentStates = new ArrayList<>();
+        for (Map.Entry<String, Alarm> region : alarmStates.entrySet()) {
+            currentStates.add(region.getValue());
+        }
+        return currentStates.toArray(new Alarm[currentStates.size()]);
     }
 
     @Override
     public MSData[] get_registered_tms() {
-        // TODO Auto-generated method stub
-        return null;
+        List<MSData> metaList = new ArrayList<>();
+        for (Map.Entry<String, ConcurrentHashMap<String, NoxReading>> regionMap : regionMapping.entrySet()) {
+            List<String> keySet = new ArrayList<>(regionMap.getValue().keySet());
+            Collections.sort(keySet);
+            for (String key : keySet) {
+                metaList.add(new MSData(regionMap.getKey(), key,
+                       getLevelsForRegion(levels, regionMap.getKey()).getAlarmLevel()));
+            }
+        }
+        return metaList.toArray(new MSData[metaList.size()]);
     }
 
     @Override
@@ -171,7 +185,11 @@ public class TLSDriver extends TLSPOA {
 
     @Override
     public boolean remove_tms(MSData data) {
-        // TODO Auto-generated method stub
+        logger.info("Removed Sensor #{} from region `{}`", data.station_name, data.region);
+        if (regionMapping.containsKey(data.region)) {
+            regionMapping.get(data.region).remove(data.station_name);
+            return true;
+        }
         return false;
     }
     
@@ -183,6 +201,10 @@ public class TLSDriver extends TLSPOA {
         return new HashMap<String, Levels>(){{
             put("default", def);
         }};
+    }
+
+    public static Levels getLevelsForRegion(HashMap<String, Levels> levels, String zone){
+        return !levels.containsKey(zone) ? levels.get("default") : levels.get(zone);
     }
 
     public ORB getEmbeddedOrb(){

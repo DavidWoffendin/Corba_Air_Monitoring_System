@@ -174,8 +174,4 @@ public class TMSDriver extends TMSPOA {
 	public NoxReading[] get_reading_log() {
 		return noxReadingLog.toArray(new NoxReading[noxReadingLog.size()]);
 	}
-
-	public ORB getEmbeddedOrb(){
-        return this.orb;
-    }
 }
