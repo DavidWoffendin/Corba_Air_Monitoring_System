@@ -98,11 +98,7 @@ public class TMSDriver extends TMSPOA {
 		nameService.rebind(sName, server_ref);	
 
 		// create and store the current metadata
-		tlsData = new TLSData(tlsName, msData);
-
-		System.out.println(msData.alarm_level);
-		System.out.println(msData.region);
-		System.out.println(msData.station_name);		
+		tlsData = new TLSData(tlsName, msData);		
 	}
 
 	@Override
@@ -155,8 +151,9 @@ public class TMSDriver extends TMSPOA {
 		}
         NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement);
         try {
+			logger.info("ping"); 
 			tls.ping();
-			logger.info("ping");    
+			logger.info("pong");    
         } catch(Exception e) {
             System.err.println("TLS `" + tlsData.tls_name + "` is unreachable!");
             return;

@@ -101,9 +101,6 @@ public class TLSDriver extends TLSPOA {
         } else {
             logger.info("Made successful connection to TMC");
         }
-
-        // Run the orb
-        orb.run();
     }
 
     /**
@@ -127,8 +124,7 @@ public class TLSDriver extends TLSPOA {
     }
 
     @Override
-    public boolean ping() {
-        logger.info("pong");      
+    public boolean ping() {   
         return true;
     }
 
@@ -206,7 +202,9 @@ public class TLSDriver extends TLSPOA {
         logger.info("" + avg);
 
         try {
-            server.ping();
+            logger.info("ping"); 
+			server.ping();
+			logger.info("pong");   
         } catch(Exception e) {
             System.err.println(server.name() + "` is unreachable!");
             return;
@@ -249,10 +247,6 @@ public class TLSDriver extends TLSPOA {
 
     public static Levels getLevelsForRegion(HashMap<String, Levels> levels, String zone){
         return !levels.containsKey(zone) ? levels.get("default") : levels.get(zone);
-    }
-
-    public ORB getEmbeddedOrb(){
-        return this.orb;
     }
 }
 

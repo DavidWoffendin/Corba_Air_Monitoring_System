@@ -114,8 +114,6 @@ class TMCDriver extends MCSPOA {
 
         if(alarms.size() == size - 1){
             logger.info("Removed alarm from sensor #{} in {} region", tls_data.stationData.station_name, tls_data.stationData.region);
-        } else {
-            logger.warn("Request to remove unknown alarm from sensor #{} in {} region", tls_data.stationData.station_name, tls_data.stationData.region);
         }
 
     }
