@@ -36,8 +36,11 @@ public class TMSDriver extends TMSPOA {
 
 	private NoxReading currentReading;
 	private Boolean status;
+	private String name;
 
 	public TMSDriver(String[] args) throws Exception {
+
+		status = true;
 
 		console = new InputReader(System.in);		
 		
@@ -80,13 +83,18 @@ public class TMSDriver extends TMSPOA {
 		}
 
 		// resolve the server object reference in the Naming service
-		TLS tls = TLSHelper.narrow(nameService.resolve_str(tlsName));
+		tls = TLSHelper.narrow(nameService.resolve_str(tlsName));
+
+		tls.ping();
 
 		// Register the Sensor with the TLS
 		final MSData msData = tls.register_tms(zoneName);
 
+		// set the station name
+		name = msData.station_name + msData.region;
+
 		// bind the Count object in the Naming service
-		NameComponent[] sName = nameService.to_name(msData.station_name);
+		NameComponent[] sName = nameService.to_name(name);
 		nameService.rebind(sName, server_ref);	
 
 		// create and store the current metadata
@@ -99,7 +107,7 @@ public class TMSDriver extends TMSPOA {
 
 	@Override
 	public String station_name() {		
-		return tlsData.stationData.station_name;
+		return name;
 	}
 
 	@Override
@@ -144,10 +152,11 @@ public class TMSDriver extends TMSPOA {
 		if(!status){
             System.err.println("System is disconnected");
             return;
-        }
+		}
         NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement);
         try {
-            tls.ping();
+			tls.ping();
+			logger.info("ping");    
         } catch(Exception e) {
             System.err.println("TLS `" + tlsData.tls_name + "` is unreachable!");
             return;

@@ -5,7 +5,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 26, 2020, 11:28:20 AM
+ * @version generated at Mar 28, 2020, 11:31:38 AM
  */
 
 public class _MCSStub
@@ -200,8 +200,8 @@ public class _MCSStub
 				try
 				{
 					_os = _request( "remove_tls_connection", true);
-					java.lang.String tmpResult10 = name;
-_os.write_string( tmpResult10 );
+					java.lang.String tmpResult9 = name;
+_os.write_string( tmpResult9 );
 					_is = _invoke(_os);
 					boolean _result = _is.read_boolean();
 					return _result;
@@ -275,7 +275,7 @@ _os.write_string( tmpResult10 );
 
 	}
 
-	public boolean remove_mcc(java.lang.String id)
+	public com.u1654949.corba.common.Alarm[] get_County_state(java.lang.String county)
 	{
 		while(true)
 		{
@@ -285,181 +285,9 @@ _os.write_string( tmpResult10 );
 				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_os = _request( "remove_mcc", true);
-					java.lang.String tmpResult11 = id;
-_os.write_string( tmpResult11 );
-					_is = _invoke(_os);
-					boolean _result = _is.read_boolean();
-					return _result;
-				}
-				catch( org.omg.CORBA.portable.RemarshalException _rx )
-					{
-						continue;
-					}
-				catch( org.omg.CORBA.portable.ApplicationException _ax )
-				{
-					String _id = _ax.getId();
-					try
-					{
-							_ax.getInputStream().close();
-					}
-					catch (java.io.IOException e)
-					{
-						throw new RuntimeException("Unexpected exception " + e.toString() );
-					}
-					throw new RuntimeException("Unexpected exception " + _id );
-			}
-			finally
-			{
-				if (_os != null)
-				{
-					try
-					{
-						_os.close();
-					}
-					catch (java.io.IOException e)
-					{
-						throw new RuntimeException("Unexpected exception " + e.toString() );
-					}
-				}
-				this._releaseReply(_is);
-			}
-		}
-		else
-		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "remove_mcc", _opsClass );
-			if( _so == null )
-				continue;
-			MCSOperations _localServant = (MCSOperations)_so.servant;
-			boolean _result;
-			try
-			{
-				_result = _localServant.remove_mcc(id);
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
-				return _result;
-			}
-			catch (RuntimeException re) 
-			{
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
-				throw re;
-			}
-			catch (java.lang.Error err) 
-			{
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
-				throw err;
-			}
-			finally
-			{
-				_servant_postinvoke(_so);
-			}
-		}
-
-		}
-
-	}
-
-	public boolean register_mcc(java.lang.String id)
-	{
-		while(true)
-		{
-			if(! this._is_local())
-			{
-				org.omg.CORBA.portable.InputStream _is = null;
-				org.omg.CORBA.portable.OutputStream _os = null;
-				try
-				{
-					_os = _request( "register_mcc", true);
-					java.lang.String tmpResult12 = id;
-_os.write_string( tmpResult12 );
-					_is = _invoke(_os);
-					boolean _result = _is.read_boolean();
-					return _result;
-				}
-				catch( org.omg.CORBA.portable.RemarshalException _rx )
-					{
-						continue;
-					}
-				catch( org.omg.CORBA.portable.ApplicationException _ax )
-				{
-					String _id = _ax.getId();
-					try
-					{
-							_ax.getInputStream().close();
-					}
-					catch (java.io.IOException e)
-					{
-						throw new RuntimeException("Unexpected exception " + e.toString() );
-					}
-					throw new RuntimeException("Unexpected exception " + _id );
-			}
-			finally
-			{
-				if (_os != null)
-				{
-					try
-					{
-						_os.close();
-					}
-					catch (java.io.IOException e)
-					{
-						throw new RuntimeException("Unexpected exception " + e.toString() );
-					}
-				}
-				this._releaseReply(_is);
-			}
-		}
-		else
-		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "register_mcc", _opsClass );
-			if( _so == null )
-				continue;
-			MCSOperations _localServant = (MCSOperations)_so.servant;
-			boolean _result;
-			try
-			{
-				_result = _localServant.register_mcc(id);
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
-				return _result;
-			}
-			catch (RuntimeException re) 
-			{
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
-				throw re;
-			}
-			catch (java.lang.Error err) 
-			{
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
-				throw err;
-			}
-			finally
-			{
-				_servant_postinvoke(_so);
-			}
-		}
-
-		}
-
-	}
-
-	public com.u1654949.corba.common.Alarm[] get_region_state(java.lang.String region)
-	{
-		while(true)
-		{
-			if(! this._is_local())
-			{
-				org.omg.CORBA.portable.InputStream _is = null;
-				org.omg.CORBA.portable.OutputStream _os = null;
-				try
-				{
-					_os = _request( "get_region_state", true);
-					java.lang.String tmpResult13 = region;
-_os.write_string( tmpResult13 );
+					_os = _request( "get_County_state", true);
+					java.lang.String tmpResult10 = county;
+_os.write_string( tmpResult10 );
 					_is = _invoke(_os);
 					com.u1654949.corba.common.Alarm[] _result = com.u1654949.corba.common.AlarmsHelper.read(_is);
 					return _result;
@@ -499,14 +327,14 @@ _os.write_string( tmpResult13 );
 		}
 		else
 		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "get_region_state", _opsClass );
+			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "get_County_state", _opsClass );
 			if( _so == null )
 				continue;
 			MCSOperations _localServant = (MCSOperations)_so.servant;
 			com.u1654949.corba.common.Alarm[] _result;
 			try
 			{
-				_result = _localServant.get_region_state(region);
+				_result = _localServant.get_County_state(county);
 				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
 					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
 				return _result;
@@ -544,8 +372,8 @@ _os.write_string( tmpResult13 );
 				try
 				{
 					_os = _request( "get_connected_tls", true);
-					java.lang.String tmpResult14 = name;
-_os.write_string( tmpResult14 );
+					java.lang.String tmpResult11 = name;
+_os.write_string( tmpResult11 );
 					_is = _invoke(_os);
 					com.u1654949.corba.ls.TLS _result = com.u1654949.corba.ls.TLSHelper.read(_is);
 					return _result;
@@ -630,8 +458,8 @@ _os.write_string( tmpResult14 );
 				try
 				{
 					_os = _request( "get_alarms", true);
-					java.lang.String tmpResult15 = id;
-_os.write_string( tmpResult15 );
+					java.lang.String tmpResult12 = id;
+_os.write_string( tmpResult12 );
 					_is = _invoke(_os);
 					com.u1654949.corba.common.Alarm[] _result = com.u1654949.corba.common.AlarmsHelper.read(_is);
 					return _result;
@@ -966,8 +794,8 @@ _os.write_string( tmpResult15 );
 				try
 				{
 					_os = _request( "register_tls_connection", true);
-					java.lang.String tmpResult16 = name;
-_os.write_string( tmpResult16 );
+					java.lang.String tmpResult13 = name;
+_os.write_string( tmpResult13 );
 					_is = _invoke(_os);
 					boolean _result = _is.read_boolean();
 					return _result;

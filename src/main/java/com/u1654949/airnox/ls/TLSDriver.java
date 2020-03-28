@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +14,7 @@ import com.u1654949.airnox.common.Levels;
 import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.MSData;
 import com.u1654949.corba.common.NoxReading;
+import com.u1654949.corba.common.TLSData;
 import com.u1654949.corba.ls.TLS;
 import com.u1654949.corba.ls.TLSHelper;
 import com.u1654949.corba.ls.TLSPOA;
@@ -35,10 +35,9 @@ public class TLSDriver extends TLSPOA {
 
     private static final Logger logger = LoggerFactory.getLogger(TLS.class);
 
-    private static final ConcurrentHashMap<String, ConcurrentHashMap<String, NoxReading>> regionMapping = new ConcurrentHashMap<>();
+    private final ConcurrentSkipListMap<String, ConcurrentSkipListMap<String, NoxReading>> regionMapping = new ConcurrentSkipListMap<>();
     private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
     private static final List<Alarm> alarmLog = new ArrayList<>();
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static HashMap<String, Levels> levels;
     private static InputReader console;
@@ -96,6 +95,13 @@ public class TLSDriver extends TLSPOA {
         NameComponent[] countName = nameService.to_name(name);
         nameService.rebind(countName, server_ref);
 
+        // test out the RMC connection
+        if (!server.register_tls_connection(name)) {
+            throw new IllegalStateException("TMC Connection failed!");
+        } else {
+            logger.info("Made successful connection to TMC");
+        }
+
         // Run the orb
         orb.run();
     }
@@ -121,7 +127,8 @@ public class TLSDriver extends TLSPOA {
     }
 
     @Override
-    public boolean ping() {        
+    public boolean ping() {
+        logger.info("pong");      
         return true;
     }
 
@@ -137,7 +144,7 @@ public class TLSDriver extends TLSPOA {
     @Override
     public MSData[] get_registered_tms() {
         List<MSData> metaList = new ArrayList<>();
-        for (Map.Entry<String, ConcurrentHashMap<String, NoxReading>> regionMap : regionMapping.entrySet()) {
+        for (Map.Entry<String, ConcurrentSkipListMap<String, NoxReading>> regionMap : regionMapping.entrySet()) {
             List<String> keySet = new ArrayList<>(regionMap.getValue().keySet());
             Collections.sort(keySet);
             for (String key : keySet) {
@@ -154,14 +161,14 @@ public class TLSDriver extends TLSPOA {
         final String id;
 
         if (regionMapping.containsKey(region)) {
-            ConcurrentHashMap<String, NoxReading> regionMap = regionMapping.get(region);
+            ConcurrentSkipListMap<String, NoxReading> regionMap = regionMapping.get(region);
 
-            id = regionMap.size() + "";
+            id = (regionMap.size() + 1) + "";
 
             regionMap.put(id, noxReading);
         } else {
             id = "1";
-            regionMapping.put(region, new ConcurrentHashMap<String, NoxReading>() {{
+            regionMapping.put(region, new ConcurrentSkipListMap<String, NoxReading>() {{
                 put(id, noxReading);
             }});
         }
@@ -178,9 +185,46 @@ public class TLSDriver extends TLSPOA {
 
     @Override
     public void receive_alarm(Alarm new_alarm) {
-        // TODO Auto-generated method stub
-        server.ping();
+        logger.info("Received alert from sensor #{} in region `{}`", new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+        ConcurrentSkipListMap<String, NoxReading> region = regionMapping.get(new_alarm.data.stationData.region);
+        region.put(new_alarm.data.stationData.station_name, new_alarm.reading);
+        alarmLog.add(new_alarm);
+        int alarm_level = getLevelsForRegion(levels, new_alarm.data.stationData.region).getAlarmLevel();
 
+        if(new_alarm.reading.reading_value > alarm_level){
+            logger.warn("Registered alarm {} from Sensor #{} in region {}", new_alarm.reading.reading_value, new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+        } else {
+            logger.info("Registered reading {} from Sensor #{} in region {}", new_alarm.reading.reading_value, new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+        }
+
+        int avg = 0;
+        for(Map.Entry<String, NoxReading> regionMap : region.entrySet()){
+            avg += regionMap.getValue().reading_value;
+        }     
+        int size = region.size();
+        avg = Math.round((avg / size) * 100) / 100;
+        logger.info("" + avg);
+
+        try {
+            server.ping();
+        } catch(Exception e) {
+            System.err.println(server.name() + "` is unreachable!");
+            return;
+        }
+
+        if((avg >= alarm_level && size > 2) || (avg > alarm_level && size >= 1)){
+            logger.warn("Average above alert level in region `{}`, forwarding to TMC...", new_alarm.data.stationData.region);
+            new_alarm.reading.reading_value = avg;
+            server.receive_alarm(new_alarm);
+            alarmStates.put(new_alarm.data.stationData.region, new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg)));
+        } else {
+            server.cancel_alarm(new TLSData(name, new_alarm.data.stationData));
+            
+            if(alarmStates.containsKey(new_alarm.data.stationData.region)){
+                logger.info("Removed alarm state for region `{}`", new_alarm.data.stationData.region);
+                alarmStates.remove(new_alarm.data.stationData.region);
+            }
+        }
     }
 
     @Override

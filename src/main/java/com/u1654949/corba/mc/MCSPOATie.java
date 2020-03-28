@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 26, 2020, 11:28:20 AM
+ * @version generated at Mar 28, 2020, 11:31:38 AM
  */
 
 public class MCSPOATie
@@ -67,19 +67,9 @@ public class MCSPOATie
 		return _delegate.remove_tls_connection(name);
 	}
 
-	public boolean remove_mcc(java.lang.String id)
+	public com.u1654949.corba.common.Alarm[] get_County_state(java.lang.String county)
 	{
-		return _delegate.remove_mcc(id);
-	}
-
-	public boolean register_mcc(java.lang.String id)
-	{
-		return _delegate.register_mcc(id);
-	}
-
-	public com.u1654949.corba.common.Alarm[] get_region_state(java.lang.String region)
-	{
-		return _delegate.get_region_state(region);
+		return _delegate.get_County_state(county);
 	}
 
 	public com.u1654949.corba.ls.TLS get_connected_tls(java.lang.String name)

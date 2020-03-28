@@ -70,15 +70,6 @@ module com {
 
             module mc {
 
-                interface MCC {
-                    readonly attribute string id;
-
-                    void add_alarm(in common::Alarm new_alarm);
-                    void remove_alarm(in common::TLSData tls_data);
-
-                    common::TLS_List get_tls_list();
-                };
-
                 interface MCS {
                     readonly attribute string name;
 
@@ -87,14 +78,11 @@ module com {
                     void cancel_alarm(in common::TLSData tls_data);
                     void receive_alarm(in common::Alarm new_alarm);
 
-                    boolean register_mcc(in string id);
-                    boolean remove_mcc(in string id);
-
                     boolean register_tls_connection(in string name);
                     boolean remove_tls_connection(in string name);
 
                     common::Alarms get_alarms(in string id);
-                    common::Alarms get_region_state(in string region);
+                    common::Alarms get_County_state(in string county);
                     common::TLS_List get_known_stations();
                     ls::TLS get_connected_tls(in string name);
                 };

@@ -38,11 +38,23 @@ public class TMS {
                 System.err.println("Invalid measurement provided!" + "\n");
                 continue;
             }
+            // user wishes to exit
+            if (input.equals("exit")) {
+                return;
+            }            
             if (input.equals("name")) {
                 System.out.println(tlsDriver.station_name());                
                 System.out.println("\n");
                 continue;
             }
+            // measurement provided, send an alert
+            if (input.equals("100")) {
+                tlsDriver.send_alarm(Integer.parseInt(input));
+            } else {
+                System.err.println("Invalid measurement provided!");
+            }
+            
+            System.out.println("");
         }
     }        
 }

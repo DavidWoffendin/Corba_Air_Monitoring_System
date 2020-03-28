@@ -5,7 +5,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 26, 2020, 11:28:20 AM
+ * @version generated at Mar 28, 2020, 11:31:38 AM
  */
 
 public abstract class MCSPOA
@@ -18,15 +18,13 @@ public abstract class MCSPOA
 		m_opsHash.put ( "_get_name", Integer.valueOf(0));
 		m_opsHash.put ( "ping", Integer.valueOf(1));
 		m_opsHash.put ( "remove_tls_connection", Integer.valueOf(2));
-		m_opsHash.put ( "remove_mcc", Integer.valueOf(3));
-		m_opsHash.put ( "register_mcc", Integer.valueOf(4));
-		m_opsHash.put ( "get_region_state", Integer.valueOf(5));
-		m_opsHash.put ( "get_connected_tls", Integer.valueOf(6));
-		m_opsHash.put ( "get_alarms", Integer.valueOf(7));
-		m_opsHash.put ( "cancel_alarm", Integer.valueOf(8));
-		m_opsHash.put ( "receive_alarm", Integer.valueOf(9));
-		m_opsHash.put ( "get_known_stations", Integer.valueOf(10));
-		m_opsHash.put ( "register_tls_connection", Integer.valueOf(11));
+		m_opsHash.put ( "get_County_state", Integer.valueOf(3));
+		m_opsHash.put ( "get_connected_tls", Integer.valueOf(4));
+		m_opsHash.put ( "get_alarms", Integer.valueOf(5));
+		m_opsHash.put ( "cancel_alarm", Integer.valueOf(6));
+		m_opsHash.put ( "receive_alarm", Integer.valueOf(7));
+		m_opsHash.put ( "get_known_stations", Integer.valueOf(8));
+		m_opsHash.put ( "register_tls_connection", Integer.valueOf(9));
 	}
 	private String[] ids = {"IDL:com/u1654949/corba/mc/MCS:1.0"};
 	public com.u1654949.corba.mc.MCS _this()
@@ -55,8 +53,8 @@ public abstract class MCSPOA
 			case 0: // _get_name
 			{
 			_out = handler.createReply();
-			java.lang.String tmpResult17 = name();
-_out.write_string( tmpResult17 );
+			java.lang.String tmpResult14 = name();
+_out.write_string( tmpResult14 );
 				break;
 			}
 			case 1: // ping
@@ -72,62 +70,48 @@ _out.write_string( tmpResult17 );
 				_out.write_boolean(remove_tls_connection(_arg0));
 				break;
 			}
-			case 3: // remove_mcc
+			case 3: // get_County_state
 			{
 				java.lang.String _arg0=_input.read_string();
 				_out = handler.createReply();
-				_out.write_boolean(remove_mcc(_arg0));
+				com.u1654949.corba.common.AlarmsHelper.write(_out,get_County_state(_arg0));
 				break;
 			}
-			case 4: // register_mcc
-			{
-				java.lang.String _arg0=_input.read_string();
-				_out = handler.createReply();
-				_out.write_boolean(register_mcc(_arg0));
-				break;
-			}
-			case 5: // get_region_state
-			{
-				java.lang.String _arg0=_input.read_string();
-				_out = handler.createReply();
-				com.u1654949.corba.common.AlarmsHelper.write(_out,get_region_state(_arg0));
-				break;
-			}
-			case 6: // get_connected_tls
+			case 4: // get_connected_tls
 			{
 				java.lang.String _arg0=_input.read_string();
 				_out = handler.createReply();
 				com.u1654949.corba.ls.TLSHelper.write(_out,get_connected_tls(_arg0));
 				break;
 			}
-			case 7: // get_alarms
+			case 5: // get_alarms
 			{
 				java.lang.String _arg0=_input.read_string();
 				_out = handler.createReply();
 				com.u1654949.corba.common.AlarmsHelper.write(_out,get_alarms(_arg0));
 				break;
 			}
-			case 8: // cancel_alarm
+			case 6: // cancel_alarm
 			{
 				com.u1654949.corba.common.TLSData _arg0=com.u1654949.corba.common.TLSDataHelper.read(_input);
 				_out = handler.createReply();
 				cancel_alarm(_arg0);
 				break;
 			}
-			case 9: // receive_alarm
+			case 7: // receive_alarm
 			{
 				com.u1654949.corba.common.Alarm _arg0=com.u1654949.corba.common.AlarmHelper.read(_input);
 				_out = handler.createReply();
 				receive_alarm(_arg0);
 				break;
 			}
-			case 10: // get_known_stations
+			case 8: // get_known_stations
 			{
 				_out = handler.createReply();
 				com.u1654949.corba.common.TLS_ListHelper.write(_out,get_known_stations());
 				break;
 			}
-			case 11: // register_tls_connection
+			case 9: // register_tls_connection
 			{
 				java.lang.String _arg0=_input.read_string();
 				_out = handler.createReply();
