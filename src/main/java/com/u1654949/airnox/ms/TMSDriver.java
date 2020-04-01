@@ -26,7 +26,7 @@ public class TMSDriver extends TMSPOA {
 
 	private final List<NoxReading> noxReadingLog = new ArrayList<>();
 
-	private static final Logger logger = LoggerFactory.getLogger(TMS.class);    
+	private static final Logger logger = LoggerFactory.getLogger(TMS.class);
 	private static TLS tls;
 
 	private TLSData tlsData;
@@ -36,7 +36,7 @@ public class TMSDriver extends TMSPOA {
 	private Boolean status = true;
 	private String name;
 
-	public TMSDriver(String[] args, String tlsName, String zoneName) throws Exception {			
+	public TMSDriver(String[] args, String tlsName, String zoneName) throws Exception {
 
 		logger.info("Sensor of zone {} connecting to LMS: {}", zoneName, tlsName);
 
@@ -57,13 +57,12 @@ public class TMSDriver extends TMSPOA {
 		TMS server_ref = TMSHelper.narrow(ref);
 
 		// Get a reference to the Naming service
-		org.omg.CORBA.Object nameServiceObj =
-                        orb.resolve_initial_references (Constants.NAME_SERVICE);
-        if (nameServiceObj == null) {
-            logger.error("nameServiceObj = null");
-            return;
+		org.omg.CORBA.Object nameServiceObj = orb.resolve_initial_references(Constants.NAME_SERVICE);
+		if (nameServiceObj == null) {
+			logger.error("nameServiceObj = null");
+			return;
 		}
-		
+
 		// Use NamingContextExt instead of NamingContext. This is
 		// part of the Interoperable naming Service.
 		NamingContextExt nameService = NamingContextExtHelper.narrow(nameServiceObj);
@@ -83,57 +82,57 @@ public class TMSDriver extends TMSPOA {
 
 		// bind the Count object in the Naming service
 		NameComponent[] sName = nameService.to_name(name);
-		nameService.rebind(sName, server_ref);	
+		nameService.rebind(sName, server_ref);
 
 		// create and store the current metadata
-		tlsData = new TLSData(tlsName, msData);	
-		
+		tlsData = new TLSData(tlsName, msData);
+
 		// Log the successful connection
 		logger.info("Connected and assigned name: " + name + " by TLS.");
 
 		// Shutdown hook to remove tms from tls
 		Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    if (!tls.remove_tms(msData)) {
-                        logger.error("Error: unable to unregister from TLS!");
-                    }
-                } catch (Exception e) {
-                    logger.error("Error: unable to unregister from TLS!");
-                }
-            }
-        });
+			@Override
+			public void run() {
+				try {
+					if (!tls.remove_tms(msData)) {
+						logger.error("Error: unable to unregister from TLS!");
+					}
+				} catch (Exception e) {
+					logger.error("Error: unable to unregister from TLS!");
+				}
+			}
+		});
 	}
 
 	@Override
-	public String station_name() {		
+	public String station_name() {
 		return name;
 	}
 
 	@Override
-	public String location() {		
+	public String location() {
 		return tlsData.stationData.region;
 	}
 
 	@Override
 	public boolean deactivate() {
-		if(status){
+		if (status) {
 			status = false;
 			logger.info("Monitoring Station is now deactivated");
-            return true;
-        }
-        return false;
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean activate() {
-		if(!status){
+		if (!status) {
 			status = true;
 			logger.info("Monitoring Station is now reactivated");
-            return true;
-        }
-        return false;
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -147,30 +146,32 @@ public class TMSDriver extends TMSPOA {
 
 	@Override
 	public void send_alarm(int measurement) {
-		if(!status){
-            System.err.println("System is disconnected");
-            return;
+		if (!status) {
+			System.err.println("System is disconnected");
+			return;
 		}
-        NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement, tlsData.stationData.region, tlsData.stationData.station_name);
-        try {
-			logger.info("ping"); 
+		NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement, tlsData.stationData.region,
+				tlsData.stationData.station_name, tlsData.tls_name);
+		try {
+			logger.info("ping");
 			tls.ping();
-			logger.info("pong");    
-        } catch(Exception e) {
-            System.err.println("TLS `" + tlsData.tls_name + "` is unreachable!");
-            return;
+			logger.info("pong");
+		} catch (Exception e) {
+			System.err.println("TLS `" + tlsData.tls_name + "` is unreachable!");
+			return;
 		}
-		
-		TLSData config = new TLSData(tls.name(), tlsData.stationData);
-        tls.receive_alarm(new Alarm(config, noxReading));
 
-        currentReading = noxReading;
-        noxReadingLog.add(noxReading);
-        if(measurement > tlsData.stationData.alarm_level){
-            System.err.println("Reading is above alarm level of " + tlsData.stationData.alarm_level + " at " + measurement + "!");
-        } else {
-            System.out.println("Registered new reading: " + measurement);
-        }
+		TLSData config = new TLSData(tls.name(), tlsData.stationData);
+		tls.receive_alarm(new Alarm(config, noxReading));
+
+		currentReading = noxReading;
+		noxReadingLog.add(noxReading);
+		if (measurement > tlsData.stationData.alarm_level) {
+			System.err.println(
+					"Reading is above alarm level of " + tlsData.stationData.alarm_level + " at " + measurement + "!");
+		} else {
+			System.out.println("Registered new reading: " + measurement);
+		}
 	}
 
 	@Override

@@ -39,21 +39,21 @@ public class TLSDriver extends TLSPOA {
 
     private final ConcurrentSkipListMap<String, ConcurrentSkipListMap<String, NoxReading>> regionMapping = new ConcurrentSkipListMap<>();
     private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
-    private final HashSet<String> theMonitoringStations = new HashSet<>();        
+    private final HashSet<String> theMonitoringStations = new HashSet<>();
     private static final List<Alarm> alarmLog = new ArrayList<>();
     private NamingContextExt nameService;
     private static HashMap<String, Levels> levels;
     private static MCS server;
     private static String name;
-    
+
     Scanner scanner = new Scanner(System.in);
 
     private final ORB orb;
 
-    public TLSDriver(String[] args, String sName) throws Exception {      
+    public TLSDriver(String[] args, String sName) throws Exception {
         levels = setLevel();
 
-        name = sName;      
+        name = sName;
 
         logger.info("Registered Local Monitoring Station: {}", name);
 
@@ -74,7 +74,7 @@ public class TLSDriver extends TLSPOA {
         if (nameServiceObj == null) {
             logger.error("nameServiceObj = null");
             return;
-        }        
+        }
 
         // Use NamingContextExt which is part of the Interoperable
         // Naming Service (INS) specification.
@@ -109,7 +109,7 @@ public class TLSDriver extends TLSPOA {
      * @return the String name
      */
     @Override
-    public String name() {         
+    public String name() {
         return name;
     }
 
@@ -124,7 +124,7 @@ public class TLSDriver extends TLSPOA {
     }
 
     @Override
-    public boolean ping() {   
+    public boolean ping() {
         return true;
     }
 
@@ -140,11 +140,11 @@ public class TLSDriver extends TLSPOA {
     @Override
     public String[] get_known_stations() {
         return theMonitoringStations.toArray(new String[theMonitoringStations.size()]);
-        
+
     }
 
     @Override
-    public MSData register_tms(String region) {       
+    public MSData register_tms(String region) {
         final NoxReading noxReading = new NoxReading();
         final String id;
 
@@ -156,14 +156,16 @@ public class TLSDriver extends TLSPOA {
             regionMap.put(id, noxReading);
         } else {
             id = "1";
-            regionMapping.put(region, new ConcurrentSkipListMap<String, NoxReading>() {{
-                put(id, noxReading);
-            }});
+            regionMapping.put(region, new ConcurrentSkipListMap<String, NoxReading>() {
+                {
+                    put(id, noxReading);
+                }
+            });
         }
         logger.info("Added Sensor #{} to {}", id, region);
 
         Levels sensorLevels;
-        if(levels.containsKey(region)){
+        if (levels.containsKey(region)) {
             sensorLevels = levels.get(region);
         } else {
             sensorLevels = levels.get("default");
@@ -177,45 +179,52 @@ public class TLSDriver extends TLSPOA {
 
     @Override
     public void receive_alarm(Alarm new_alarm) {
-        logger.info("Received alert from sensor #{} in region `{}`", new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+        logger.info("Received reading from Monitoring Station #{} in region `{}`",
+                new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
         ConcurrentSkipListMap<String, NoxReading> region = regionMapping.get(new_alarm.data.stationData.region);
         region.put(new_alarm.data.stationData.station_name, new_alarm.reading);
         alarmLog.add(new_alarm);
         int alarm_level = getLevelsForRegion(levels, new_alarm.data.stationData.region).getAlarmLevel();
 
-        if(new_alarm.reading.reading_value > alarm_level){
-            logger.warn("Registered alarm {} from Sensor #{} in region {}", new_alarm.reading.reading_value, new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+        if (new_alarm.reading.reading_value > alarm_level) {
+            logger.warn("Registered alarm {} from Monitoring Station #{} in region {}", new_alarm.reading.reading_value,
+                    new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
         } else {
-            logger.info("Registered reading {} from Sensor #{} in region {}", new_alarm.reading.reading_value, new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+            logger.info("Registered reading {} from Monitoring Station #{} in region {}",
+                    new_alarm.reading.reading_value, new_alarm.data.stationData.station_name,
+                    new_alarm.data.stationData.region);
         }
 
         int avg = 0;
-        for(Map.Entry<String, NoxReading> regionMap : region.entrySet()){
+        for (Map.Entry<String, NoxReading> regionMap : region.entrySet()) {
             avg += regionMap.getValue().reading_value;
-        }     
+        }
         int size = region.size();
         System.out.println(size);
         avg = Math.round((avg / size) * 100) / 100;
         logger.info("" + avg);
 
         try {
-            logger.info("ping"); 
-			server.ping();
-			logger.info("pong");   
-        } catch(Exception e) {
+            logger.info("ping");
+            server.ping();
+            logger.info("pong");
+        } catch (Exception e) {
             System.err.println(server.name() + "` is unreachable!");
             return;
         }
 
-        if((avg >= alarm_level && size > 2) || (avg > alarm_level && size > 1)){
-            logger.warn("Average above alert level in region `{}`, forwarding to TMC...", new_alarm.data.stationData.region);
+        if ((avg >= alarm_level && size > 2) || (avg > alarm_level && size > 1)) {
+            logger.warn("Average above alert level in region `{}`, forwarding to TMC...",
+                    new_alarm.data.stationData.region);
             new_alarm.reading.reading_value = avg;
             server.receive_alarm(new_alarm);
-            alarmStates.put(new_alarm.data.stationData.region, new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg, new_alarm.data.stationData.region, new_alarm.data.stationData.station_name)));
+            alarmStates.put(new_alarm.data.stationData.region,
+                    new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg,
+                            new_alarm.data.stationData.region, new_alarm.data.stationData.station_name, name)));
         } else {
             server.cancel_alarm(new TLSData(name, new_alarm.data.stationData));
-            
-            if(alarmStates.containsKey(new_alarm.data.stationData.region)){
+
+            if (alarmStates.containsKey(new_alarm.data.stationData.region)) {
                 logger.info("Removed alarm state for region `{}`", new_alarm.data.stationData.region);
                 alarmStates.remove(new_alarm.data.stationData.region);
             }
@@ -236,7 +245,7 @@ public class TLSDriver extends TLSPOA {
 
     @Override
     public NoxReading[] take_readings() {
-        NoxReading[] noxReadings  = new NoxReading[theMonitoringStations.size()];
+        NoxReading[] noxReadings = new NoxReading[theMonitoringStations.size()];
         int size = 0;
         for (String station : theMonitoringStations) {
             TMS tempServer = get_connected_tms(station);
@@ -253,39 +262,43 @@ public class TLSDriver extends TLSPOA {
         boolean status = tempServer.activate();
         return status;
     }
+
     public boolean deactivateTMS(String name) {
         TMS tempServer = get_connected_tms(name);
         boolean status = tempServer.deactivate();
         return status;
-    } 
+    }
+
     public boolean resetTMS(String name) {
         TMS tempServer = get_connected_tms(name);
         boolean status = tempServer.reset();
         return status;
-    } 
+    }
 
     public TMS get_connected_tms(String name) {
         TMS tempServer = null;
         try {
             tempServer = TMSHelper.narrow(nameService.resolve_str(name));
-        } catch (CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName | org.omg.CosNaming.NamingContextPackage.NotFound e) {
+        } catch (CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName
+                | org.omg.CosNaming.NamingContextPackage.NotFound e) {
             logger.error("nameServiceObj = null" + e);
         }
         return tempServer;
     }
-    
-    private HashMap<String, Levels> setLevel(){
+
+    private HashMap<String, Levels> setLevel() {
         final Levels def = new Levels(Constants.DEFAULT_ALERT_LEVEL, Constants.DEFAULT_WARNING_LEVEL);
-        
+
         logger.info("Set default warning level to {}, alert level to {}", def.getWarningLevel(), def.getAlarmLevel());
 
-        return new HashMap<String, Levels>(){{
-            put("default", def);
-        }};
+        return new HashMap<String, Levels>() {
+            {
+                put("default", def);
+            }
+        };
     }
 
-    public static Levels getLevelsForRegion(HashMap<String, Levels> levels, String zone){
+    public static Levels getLevelsForRegion(HashMap<String, Levels> levels, String zone) {
         return !levels.containsKey(zone) ? levels.get("default") : levels.get(zone);
     }
 }
-

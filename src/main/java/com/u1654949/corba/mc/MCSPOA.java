@@ -5,7 +5,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 2:00:22 PM
+ * @version generated at Apr 1, 2020, 3:30:59 PM
  */
 
 public abstract class MCSPOA
@@ -15,16 +15,12 @@ public abstract class MCSPOA
 	static private final java.util.HashMap<String,Integer> m_opsHash = new java.util.HashMap<String,Integer>();
 	static
 	{
-		m_opsHash.put ( "_get_name", Integer.valueOf(0));
-		m_opsHash.put ( "ping", Integer.valueOf(1));
-		m_opsHash.put ( "remove_tls_connection", Integer.valueOf(2));
-		m_opsHash.put ( "get_County_state", Integer.valueOf(3));
-		m_opsHash.put ( "get_connected_tls", Integer.valueOf(4));
-		m_opsHash.put ( "get_known_servers", Integer.valueOf(5));
-		m_opsHash.put ( "get_alarms", Integer.valueOf(6));
-		m_opsHash.put ( "cancel_alarm", Integer.valueOf(7));
-		m_opsHash.put ( "receive_alarm", Integer.valueOf(8));
-		m_opsHash.put ( "register_tls_connection", Integer.valueOf(9));
+		m_opsHash.put ( "register_tls_connection", Integer.valueOf(0));
+		m_opsHash.put ( "_get_name", Integer.valueOf(1));
+		m_opsHash.put ( "ping", Integer.valueOf(2));
+		m_opsHash.put ( "remove_tls_connection", Integer.valueOf(3));
+		m_opsHash.put ( "receive_alarm", Integer.valueOf(4));
+		m_opsHash.put ( "cancel_alarm", Integer.valueOf(5));
 	}
 	private String[] ids = {"IDL:com/u1654949/corba/mc/MCS:1.0"};
 	public com.u1654949.corba.mc.MCS _this()
@@ -50,72 +46,45 @@ public abstract class MCSPOA
 			throw new org.omg.CORBA.BAD_OPERATION(method + " not found");
 		switch ( opsIndex.intValue() )
 		{
-			case 0: // _get_name
+			case 0: // register_tls_connection
 			{
-			_out = handler.createReply();
-			java.lang.String tmpResult17 = name();
-_out.write_string( tmpResult17 );
+				java.lang.String _arg0=_input.read_string();
+				_out = handler.createReply();
+				_out.write_boolean(register_tls_connection(_arg0));
 				break;
 			}
-			case 1: // ping
+			case 1: // _get_name
+			{
+			_out = handler.createReply();
+			java.lang.String tmpResult15 = name();
+_out.write_string( tmpResult15 );
+				break;
+			}
+			case 2: // ping
 			{
 				_out = handler.createReply();
 				_out.write_boolean(ping());
 				break;
 			}
-			case 2: // remove_tls_connection
+			case 3: // remove_tls_connection
 			{
 				java.lang.String _arg0=_input.read_string();
 				_out = handler.createReply();
 				_out.write_boolean(remove_tls_connection(_arg0));
 				break;
 			}
-			case 3: // get_County_state
-			{
-				java.lang.String _arg0=_input.read_string();
-				_out = handler.createReply();
-				com.u1654949.corba.common.AlarmsHelper.write(_out,get_County_state(_arg0));
-				break;
-			}
-			case 4: // get_connected_tls
-			{
-				java.lang.String _arg0=_input.read_string();
-				_out = handler.createReply();
-				com.u1654949.corba.ls.TLSHelper.write(_out,get_connected_tls(_arg0));
-				break;
-			}
-			case 5: // get_known_servers
-			{
-				_out = handler.createReply();
-				com.u1654949.corba.common.TLS_ListHelper.write(_out,get_known_servers());
-				break;
-			}
-			case 6: // get_alarms
-			{
-				java.lang.String _arg0=_input.read_string();
-				_out = handler.createReply();
-				com.u1654949.corba.common.AlarmsHelper.write(_out,get_alarms(_arg0));
-				break;
-			}
-			case 7: // cancel_alarm
-			{
-				com.u1654949.corba.common.TLSData _arg0=com.u1654949.corba.common.TLSDataHelper.read(_input);
-				_out = handler.createReply();
-				cancel_alarm(_arg0);
-				break;
-			}
-			case 8: // receive_alarm
+			case 4: // receive_alarm
 			{
 				com.u1654949.corba.common.Alarm _arg0=com.u1654949.corba.common.AlarmHelper.read(_input);
 				_out = handler.createReply();
 				receive_alarm(_arg0);
 				break;
 			}
-			case 9: // register_tls_connection
+			case 5: // cancel_alarm
 			{
-				java.lang.String _arg0=_input.read_string();
+				com.u1654949.corba.common.TLSData _arg0=com.u1654949.corba.common.TLSDataHelper.read(_input);
 				_out = handler.createReply();
-				_out.write_boolean(register_tls_connection(_arg0));
+				cancel_alarm(_arg0);
 				break;
 			}
 		}

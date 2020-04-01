@@ -5,7 +5,7 @@ package com.u1654949.corba.common;
  * Generated from IDL struct "TLSData".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 2:00:22 PM
+ * @version generated at Apr 1, 2020, 3:30:59 PM
  */
 
 public abstract class TLSDataHelper
@@ -65,8 +65,8 @@ public abstract class TLSDataHelper
 	}
 	public static void write (final org.omg.CORBA.portable.OutputStream out, final com.u1654949.corba.common.TLSData s)
 	{
-		java.lang.String tmpResult4 = s.tls_name;
-out.write_string( tmpResult4 );
+		java.lang.String tmpResult5 = s.tls_name;
+out.write_string( tmpResult5 );
 		com.u1654949.corba.common.MSDataHelper.write(out,s.stationData);
 	}
 }

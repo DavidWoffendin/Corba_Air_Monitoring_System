@@ -5,7 +5,7 @@ package com.u1654949.corba.ls;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 2:00:22 PM
+ * @version generated at Apr 1, 2020, 3:30:59 PM
  */
 
 public class _TLSStub
@@ -368,8 +368,8 @@ public class _TLSStub
 				try
 				{
 					_os = _request( "register_tms", true);
-					java.lang.String tmpResult10 = region;
-_os.write_string( tmpResult10 );
+					java.lang.String tmpResult11 = region;
+_os.write_string( tmpResult11 );
 					_is = _invoke(_os);
 					com.u1654949.corba.common.MSData _result = com.u1654949.corba.common.MSDataHelper.read(_is);
 					return _result;

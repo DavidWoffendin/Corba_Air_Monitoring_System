@@ -1,6 +1,7 @@
 package com.u1654949.airnox.mc;
 
 import com.u1654949.corba.common.Alarm;
+import com.u1654949.corba.common.NoxReading;
 import com.u1654949.corba.common.TLSData;
 import com.u1654949.corba.ls.TLS;
 import com.u1654949.corba.ls.TLSHelper;
@@ -73,9 +74,6 @@ class TMCDriver extends MCSPOA {
 
         // Server has loaded up correctly
         logger.info("The Monitoring Centre is operational.");
-
-        // Wait for invocations from clients upon a new thread
-        orb.run();
     }
 
     /**
@@ -101,19 +99,20 @@ class TMCDriver extends MCSPOA {
 
     @Override
     public void cancel_alarm(TLSData tls_data) {
-        
+
         int size = alarms.size();
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             Alarm alarm = alarms.get(i);
 
-            if(alarm.data.equals(tls_data)){
+            if (alarm.data.equals(tls_data)) {
                 alarms.remove(i);
                 break;
             }
         }
 
-        if(alarms.size() == size - 1){
-            logger.info("Removed alarm from sensor #{} in {} region", tls_data.stationData.station_name, tls_data.stationData.region);
+        if (alarms.size() == size - 1) {
+            logger.info("Removed alarm from sensor #{} in {} region", tls_data.stationData.station_name,
+                    tls_data.stationData.region);
         }
 
     }
@@ -122,25 +121,24 @@ class TMCDriver extends MCSPOA {
     public void receive_alarm(Alarm new_alarm) {
         boolean stored = false;
 
-        for(int i = 0, j = alarms.size(); i < j; i++){
+        for (int i = 0, j = alarms.size(); i < j; i++) {
 
             Alarm storedAlert = alarms.get(i);
 
-            if(storedAlert.data.equals(new_alarm.data)){
+            if (storedAlert.data.equals(new_alarm.data)) {
                 alarms.set(i, new_alarm);
                 stored = true;
                 break;
             }
         }
 
-        if(!stored){
+        if (!stored) {
             alarms.add(new_alarm);
         }
 
-        logger.info("Received alarm from sensor #{} in {} region", new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+        logger.info("Received alarm from sensor #{} in {} region", new_alarm.data.stationData.station_name,
+                new_alarm.data.stationData.region);
     }
-
-    
 
     @Override
     public boolean register_tls_connection(String name) {
@@ -155,28 +153,32 @@ class TMCDriver extends MCSPOA {
         theLocalServers.remove(name);
         return true;
     }
-
-    @Override
+    
     public Alarm[] get_alarms(String id) {
         return alarms.toArray(new Alarm[alarms.size()]);
     }
 
-    @Override
-    public Alarm[] get_County_state(String county) {
-        TLS tls = get_connected_tls(county);
-        try {
-            return tls != null && tls.ping() ? tls.get_current_state() : null;
-        } catch(Exception e) {
-            return null;
+    
+    public NoxReading[][] get_local_station_readings() {
+        NoxReading[][] noxReadings = new NoxReading[theLocalServers.size()][];
+        int size = 0;
+        for (String station : theLocalServers) {
+            System.out.println(station);
+            TLS tempServer = get_connected_tls(station);
+            System.out.println(tempServer.name());
+            NoxReading[] tempReading = tempServer.take_readings();            
+            noxReadings[size] = tempReading;
+            size++;
         }
+        return noxReadings;
     }
 
-    @Override
+    
     public String[] get_known_servers() {
         return theLocalServers.toArray(new String[theLocalServers.size()]);
     }
 
-    @Override
+    
     public TLS get_connected_tls(String name) {
         TLS tempServer = null;
         try {
@@ -186,11 +188,4 @@ class TMCDriver extends MCSPOA {
         }
         return tempServer;
     }
-
-    public ORB getEmbeddedOrb(){
-        return this.orb;
-    }
 }
-
-
-

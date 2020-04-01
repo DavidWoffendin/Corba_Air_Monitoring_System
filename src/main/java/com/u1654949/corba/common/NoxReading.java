@@ -4,7 +4,7 @@ package com.u1654949.corba.common;
  * Generated from IDL struct "NoxReading".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 2:00:22 PM
+ * @version generated at Apr 1, 2020, 3:30:59 PM
  */
 
 public final class NoxReading
@@ -17,11 +17,13 @@ public final class NoxReading
 	public int reading_value;
 	public java.lang.String region = "";
 	public java.lang.String station_name = "";
-	public NoxReading(long time, int reading_value, java.lang.String region, java.lang.String station_name)
+	public java.lang.String server_name = "";
+	public NoxReading(long time, int reading_value, java.lang.String region, java.lang.String station_name, java.lang.String server_name)
 	{
 		this.time = time;
 		this.reading_value = reading_value;
 		this.region = region;
 		this.station_name = station_name;
+		this.server_name = server_name;
 	}
 }

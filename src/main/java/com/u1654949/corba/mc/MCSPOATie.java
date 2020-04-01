@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 2:00:22 PM
+ * @version generated at Apr 1, 2020, 3:30:59 PM
  */
 
 public class MCSPOATie
@@ -52,6 +52,11 @@ public class MCSPOATie
 		}
 		return super._default_POA();
 	}
+	public boolean register_tls_connection(java.lang.String name)
+	{
+		return _delegate.register_tls_connection(name);
+	}
+
 	public java.lang.String name()
 	{
 		return _delegate.name();
@@ -67,39 +72,14 @@ public class MCSPOATie
 		return _delegate.remove_tls_connection(name);
 	}
 
-	public com.u1654949.corba.common.Alarm[] get_County_state(java.lang.String county)
-	{
-		return _delegate.get_County_state(county);
-	}
-
-	public com.u1654949.corba.ls.TLS get_connected_tls(java.lang.String name)
-	{
-		return _delegate.get_connected_tls(name);
-	}
-
-	public java.lang.String[] get_known_servers()
-	{
-		return _delegate.get_known_servers();
-	}
-
-	public com.u1654949.corba.common.Alarm[] get_alarms(java.lang.String id)
-	{
-		return _delegate.get_alarms(id);
-	}
-
-	public void cancel_alarm(com.u1654949.corba.common.TLSData tls_data)
-	{
-_delegate.cancel_alarm(tls_data);
-	}
-
 	public void receive_alarm(com.u1654949.corba.common.Alarm new_alarm)
 	{
 _delegate.receive_alarm(new_alarm);
 	}
 
-	public boolean register_tls_connection(java.lang.String name)
+	public void cancel_alarm(com.u1654949.corba.common.TLSData tls_data)
 	{
-		return _delegate.register_tls_connection(name);
+_delegate.cancel_alarm(tls_data);
 	}
 
 }

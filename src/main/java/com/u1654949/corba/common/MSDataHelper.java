@@ -5,7 +5,7 @@ package com.u1654949.corba.common;
  * Generated from IDL struct "MSData".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 2:00:22 PM
+ * @version generated at Apr 1, 2020, 3:30:59 PM
  */
 
 public abstract class MSDataHelper
@@ -66,10 +66,10 @@ public abstract class MSDataHelper
 	}
 	public static void write (final org.omg.CORBA.portable.OutputStream out, final com.u1654949.corba.common.MSData s)
 	{
-		java.lang.String tmpResult2 = s.region;
-out.write_string( tmpResult2 );
-		java.lang.String tmpResult3 = s.station_name;
+		java.lang.String tmpResult3 = s.region;
 out.write_string( tmpResult3 );
+		java.lang.String tmpResult4 = s.station_name;
+out.write_string( tmpResult4 );
 		out.write_long(s.alarm_level);
 	}
 }

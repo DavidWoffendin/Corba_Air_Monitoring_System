@@ -11,6 +11,7 @@ module com {
                     long reading_value;
                     string region;
                     string station_name;
+                    string server_name;
                 };
 
                 struct MSData {
@@ -83,11 +84,6 @@ module com {
 
                     boolean register_tls_connection(in string name);
                     boolean remove_tls_connection(in string name);
-
-                    common::Alarms get_alarms(in string id);
-                    common::Alarms get_County_state(in string county);
-                    common::TLS_List get_known_servers();
-                    ls::TLS get_connected_tls(in string name);
                 };
 
             };

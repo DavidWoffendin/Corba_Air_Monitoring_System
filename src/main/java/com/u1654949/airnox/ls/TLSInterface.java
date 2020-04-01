@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.NoxReading;
 
 public class TLSInterface {
@@ -25,6 +26,7 @@ public class TLSInterface {
         System.out.println("Choose from one of the commands below:");
         System.out.println("- exit, exits the server");
         System.out.println("- name, return the name of the server");
+        System.out.println("- log, return the log of all received alarms");
         System.out.println("- poll, return the last reading of all connected TMS's");
         System.out.println("- activate, activates a sensor");
         System.out.println("- deactivate, deactivate a sensor");
@@ -46,6 +48,21 @@ public class TLSInterface {
                 System.out.println("\n");
                 continue;
             }
+            if (input.equals("log")) {
+                Alarm[] alarms = tlsDriver.alarm_log();
+                int temp;
+                for (temp = 0; temp < alarms.length; temp++) {
+                    Alarm tempReading = alarms[temp];
+                    Date date = new Date(tempReading.reading.time);
+                    String time = simpleDateFormat.format(date);
+                    System.out.println("Alarm from Monitoring Station - ID:" + tempReading.reading.station_name
+                            + " - Region:" + tempReading.reading.region + ", with a value of "
+                            + tempReading.reading.reading_value + " at " + time);
+
+                }
+                System.out.println("\n");
+                continue;
+            }
             if (input.equals("poll")) {
                 NoxReading[] noxReadings = tlsDriver.take_readings();
                 int temp;
@@ -53,14 +70,14 @@ public class TLSInterface {
                     NoxReading tempReading = noxReadings[temp];
                     Date date = new Date(tempReading.time);
                     String time = simpleDateFormat.format(date);
-                    System.out.println("Last reading from Monitoring Station - ID:" + tempReading.station_name + 
-                                       " - Region:"+tempReading.region+", with a value of "+tempReading.reading_value+
-                                       " at " + time);
-  
-                } 
+                    System.out.println("Last reading from Monitoring Station - ID:" + tempReading.station_name
+                            + " - Region:" + tempReading.region + ", with a value of " + tempReading.reading_value
+                            + " at " + time);
+
+                }
                 System.out.println("\n");
                 continue;
-            }            
+            }
             if (input.equals("activate")) {
                 String[] stations = tlsDriver.get_known_stations();
                 System.out.println("Current connect stations are:");
@@ -70,7 +87,7 @@ public class TLSInterface {
                 System.out.println("Please choose a station to activate:");
                 String station = scanner.next();
                 boolean status = tlsDriver.activateTMS(station);
-                if (status){
+                if (status) {
                     System.out.println("Station activated");
                 } else {
                     System.out.println("Station failed to activate or is already activated");
@@ -86,7 +103,7 @@ public class TLSInterface {
                 System.out.println("Please choose a station to deactivate:");
                 String station = scanner.next();
                 boolean status = tlsDriver.deactivateTMS(station);
-                if (status){
+                if (status) {
                     System.out.println("Station deactivated");
                 } else {
                     System.out.println("Station failed to deactivate or is already deactivated");
@@ -102,7 +119,7 @@ public class TLSInterface {
                 System.out.println("Please choose a station to reset:");
                 String station = scanner.next();
                 boolean status = tlsDriver.resetTMS(station);
-                if (status){
+                if (status) {
                     System.out.println("Station reset");
                 } else {
                     System.out.println("Station failed to reset");
