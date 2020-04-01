@@ -18,17 +18,12 @@ public final class Constants {
     public static final Integer DEFAULT_WARNING_LEVEL = 40;
 
     /**
-     * The name of the application, to display as a title.
-     */
-    public static final String APPLICATION_NAME = "Nox Air Warning System";
-
-    /**
      * The NameService constant, in order to avoid any typos when retrieving.
      */
     public static final String NAME_SERVICE = "NameService";
 
     /**
-     * The name of the (singular) Regional Monitoring Centre, to avoid typos.
+     * The name of the Monitoring Centre, to avoid typos.
      */
     public static final String THE_MONITORING_CENTRE = "The Monitoring Centre";
 

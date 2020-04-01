@@ -10,19 +10,22 @@ public class TMSInterface {
 
     private static TMSDriver tmsDriver;
 
+    static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) throws Exception {
-        tmsDriver = new TMSDriver(args);
+        System.out.println("Please enter the local station name: ");
+        String tlsName = scanner.next();       
+        System.out.println("Please enter the monitoring station zone: ");
+        String zoneName = scanner.next();
+        tmsDriver = new TMSDriver(args, tlsName, zoneName);
         processInput();
     }
 
-    private static void processInput(){
-        Scanner scanner = new Scanner(System.in);
-        
-        // display menu
+    private static void processInput() {
         System.out.println("");
         System.out.println("Choose from one of the commands below:");
         System.out.println("- reading, exits the sensor");
-        System.out.println("- exit, exits the sensor");        
+        System.out.println("- exit, exits the sensor");
         System.out.println("- name, return the name of the sensor");
         System.out.println("- location, returns the location of the sensor");
         System.out.println("- current_reading, returns the last reading of the sensor");
@@ -33,7 +36,7 @@ public class TMSInterface {
         System.out.println("- status, views current Sensor alert status");
         System.out.println("");
 
-        while(true){
+        while (true) {
             System.out.print("Please select an option: ");
             String input = scanner.next();
             if (input == null) {

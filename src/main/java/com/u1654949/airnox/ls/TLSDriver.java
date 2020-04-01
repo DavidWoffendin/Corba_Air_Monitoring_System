@@ -1,11 +1,11 @@
 package com.u1654949.airnox.ls;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.u1654949.airnox.common.Constants;
@@ -40,26 +40,21 @@ public class TLSDriver extends TLSPOA {
 
     private final ConcurrentSkipListMap<String, ConcurrentSkipListMap<String, NoxReading>> regionMapping = new ConcurrentSkipListMap<>();
     private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
-    private final HashSet<String> theMonitoringStations = new HashSet<>();
-        
+    private final HashSet<String> theMonitoringStations = new HashSet<>();        
     private static final List<Alarm> alarmLog = new ArrayList<>();
-
     private NamingContextExt nameService;
-
     private static HashMap<String, Levels> levels;
-    private static InputReader console;
     private static MCS server;
     private static String name;
+    
+    Scanner scanner = new Scanner(System.in);
 
     private final ORB orb;
 
-    public TLSDriver(String[] args) throws Exception {
-
-        console = new InputReader(System.in);
-
+    public TLSDriver(String[] args, String sName) throws Exception {      
         levels = setLevel();
 
-        name = console.readString("Please enter the station name: ");
+        name = sName;      
 
         logger.info("Registered Local Monitoring Station: {}", name);
 

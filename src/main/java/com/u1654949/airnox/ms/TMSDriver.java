@@ -35,18 +35,10 @@ public class TMSDriver extends TMSPOA {
 	private final ORB orb;
 
 	private NoxReading currentReading;
-	private Boolean status;
+	private Boolean status = true;
 	private String name;
 
-	public TMSDriver(String[] args) throws Exception {
-
-		status = true;
-
-		console = new InputReader(System.in);		
-		
-		String tlsName = console.readString("Please enter the local station name: ");
-
-		String zoneName = console.readString("Please enter the monitoring station zone: ");
+	public TMSDriver(String[] args, String tlsName, String zoneName) throws Exception {			
 
 		logger.info("Sensor of zone {} connecting to LMS: {}", zoneName, tlsName);
 

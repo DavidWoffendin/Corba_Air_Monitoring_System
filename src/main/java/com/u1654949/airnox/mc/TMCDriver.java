@@ -30,11 +30,8 @@ class TMCDriver extends MCSPOA {
 
     private static final Logger logger = LoggerFactory.getLogger(MCS.class);
     private final HashSet<String> theLocalServers = new HashSet<>();
-
     private NamingContextExt nameService;
-
     private final List<Alarm> alarms = new ArrayList<>();
-
     private final ORB orb;
 
     public TMCDriver(String[] args) throws Exception {

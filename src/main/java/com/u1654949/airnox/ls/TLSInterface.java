@@ -11,13 +11,16 @@ public class TLSInterface {
     private static TLSDriver tlsDriver;
     static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
 
+    static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) throws Exception {
-        tlsDriver = new TLSDriver(args);
+        System.out.println("Please enter a name for the server: ");
+        String input = scanner.next();
+        tlsDriver = new TLSDriver(args, input);
         processInput();
     }
 
     private static void processInput() {
-        Scanner scanner = new Scanner(System.in);
 
         // display menu
         System.out.println("");
