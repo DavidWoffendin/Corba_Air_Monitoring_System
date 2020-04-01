@@ -5,7 +5,7 @@ package com.u1654949.corba.ms;
  * Generated from IDL interface "TMS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 12:42:52 PM
+ * @version generated at Apr 1, 2020, 2:00:22 PM
  */
 
 public interface TMSOperations
@@ -16,7 +16,7 @@ public interface TMSOperations
 	java.lang.String location();
 	boolean deactivate();
 	boolean activate();
-	void reset();
+	boolean reset();
 	void send_alarm(int measurement);
 	com.u1654949.corba.common.NoxReading get_reading();
 	com.u1654949.corba.common.NoxReading[] get_reading_log();

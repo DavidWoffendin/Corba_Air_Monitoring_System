@@ -5,7 +5,7 @@ package com.u1654949.corba.ms;
  * Generated from IDL interface "TMS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 12:42:52 PM
+ * @version generated at Apr 1, 2020, 2:00:22 PM
  */
 
 public abstract class TMSPOA
@@ -89,7 +89,7 @@ _out.write_string( tmpResult8 );
 			case 6: // reset
 			{
 				_out = handler.createReply();
-				reset();
+				_out.write_boolean(reset());
 				break;
 			}
 			case 7: // _get_location

@@ -21,13 +21,14 @@ public class TLSInterface {
     }
 
     private static void processInput() {
-
-        // display menu
         System.out.println("");
         System.out.println("Choose from one of the commands below:");
-        System.out.println("- exit, exits the sensor");
-        System.out.println("- name, return the name of the sensor");
+        System.out.println("- exit, exits the server");
+        System.out.println("- name, return the name of the server");
         System.out.println("- poll, return the last reading of all connected TMS's");
+        System.out.println("- activate, activates a sensor");
+        System.out.println("- deactivate, deactivate a sensor");
+        System.out.println("- reset, reset a sensor");
         System.out.println("");
 
         while (true) {
@@ -58,6 +59,54 @@ public class TLSInterface {
   
                 } 
                 System.out.println("\n");
+                continue;
+            }            
+            if (input.equals("activate")) {
+                String[] stations = tlsDriver.get_known_stations();
+                System.out.println("Current connect stations are:");
+                for (String station : stations) {
+                    System.out.println(station);
+                }
+                System.out.println("Please choose a station to activate:");
+                String station = scanner.next();
+                boolean status = tlsDriver.activateTMS(station);
+                if (status){
+                    System.out.println("Station activated");
+                } else {
+                    System.out.println("Station failed to activate or is already activated");
+                }
+                continue;
+            }
+            if (input.equals("deactivate")) {
+                String[] stations = tlsDriver.get_known_stations();
+                System.out.println("Current connect stations are:");
+                for (String station : stations) {
+                    System.out.println(station);
+                }
+                System.out.println("Please choose a station to deactivate:");
+                String station = scanner.next();
+                boolean status = tlsDriver.deactivateTMS(station);
+                if (status){
+                    System.out.println("Station deactivated");
+                } else {
+                    System.out.println("Station failed to deactivate or is already deactivated");
+                }
+                continue;
+            }
+            if (input.equals("reset")) {
+                String[] stations = tlsDriver.get_known_stations();
+                System.out.println("Current connect stations are:");
+                for (String station : stations) {
+                    System.out.println(station);
+                }
+                System.out.println("Please choose a station to reset:");
+                String station = scanner.next();
+                boolean status = tlsDriver.resetTMS(station);
+                if (status){
+                    System.out.println("Station reset");
+                } else {
+                    System.out.println("Station failed to reset");
+                }
                 continue;
             }
         }

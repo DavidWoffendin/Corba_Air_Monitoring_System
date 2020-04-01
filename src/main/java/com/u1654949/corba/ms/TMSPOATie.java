@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "TMS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 12:42:52 PM
+ * @version generated at Apr 1, 2020, 2:00:22 PM
  */
 
 public class TMSPOATie
@@ -82,9 +82,9 @@ _delegate.send_alarm(measurement);
 		return _delegate.get_reading_log();
 	}
 
-	public void reset()
+	public boolean reset()
 	{
-_delegate.reset();
+		return _delegate.reset();
 	}
 
 	public java.lang.String location()

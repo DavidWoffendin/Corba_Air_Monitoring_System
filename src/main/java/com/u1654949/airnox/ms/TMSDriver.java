@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.u1654949.airnox.common.Constants;
-import com.u1654949.airnox.common.InputReader;
 import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.MSData;
 import com.u1654949.corba.common.NoxReading;
@@ -29,7 +28,6 @@ public class TMSDriver extends TMSPOA {
 
 	private static final Logger logger = LoggerFactory.getLogger(TMS.class);    
 	private static TLS tls;
-	private static InputReader console;
 
 	private TLSData tlsData;
 	private final ORB orb;
@@ -121,8 +119,8 @@ public class TMSDriver extends TMSPOA {
 	@Override
 	public boolean deactivate() {
 		if(status){
-            tls.remove_tms(tlsData.stationData);
-            status = false;
+			status = false;
+			logger.info("Monitoring Station is now deactivated");
             return true;
         }
         return false;
@@ -131,22 +129,19 @@ public class TMSDriver extends TMSPOA {
 	@Override
 	public boolean activate() {
 		if(!status){
-            try {
-                tlsData.stationData = tls.register_tms(tlsData.stationData.region);
-            } catch (Exception e) {
-                logger.error("Error occurred: " + e);
-            	e.printStackTrace();
-            }
-            status = true;
+			status = true;
+			logger.info("Monitoring Station is now reactivated");
             return true;
         }
         return false;
 	}
 
 	@Override
-	public void reset() {
+	public boolean reset() {
 		currentReading = null;
-        noxReadingLog.clear();
+		noxReadingLog.clear();
+		logger.info("Monitoring Station is reset");
+		return true;
 
 	}
 

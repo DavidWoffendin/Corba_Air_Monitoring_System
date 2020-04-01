@@ -9,7 +9,6 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.u1654949.airnox.common.Constants;
-import com.u1654949.airnox.common.InputReader;
 import com.u1654949.airnox.common.Levels;
 import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.MSData;
@@ -248,6 +247,22 @@ public class TLSDriver extends TLSPOA {
         }
         return noxReadings;
     }
+
+    public boolean activateTMS(String name) {
+        TMS tempServer = get_connected_tms(name);
+        boolean status = tempServer.activate();
+        return status;
+    }
+    public boolean deactivateTMS(String name) {
+        TMS tempServer = get_connected_tms(name);
+        boolean status = tempServer.deactivate();
+        return status;
+    } 
+    public boolean resetTMS(String name) {
+        TMS tempServer = get_connected_tms(name);
+        boolean status = tempServer.reset();
+        return status;
+    } 
 
     public TMS get_connected_tms(String name) {
         TMS tempServer = null;

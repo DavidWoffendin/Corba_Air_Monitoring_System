@@ -43,7 +43,7 @@ module com {
 
                     boolean deactivate();
                     boolean activate();
-                    void reset();
+                    boolean reset();
 
                     void send_alarm(in long measurement);
 

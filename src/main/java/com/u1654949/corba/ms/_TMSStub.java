@@ -5,7 +5,7 @@ package com.u1654949.corba.ms;
  * Generated from IDL interface "TMS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 12:42:52 PM
+ * @version generated at Apr 1, 2020, 2:00:22 PM
  */
 
 public class _TMSStub
@@ -524,7 +524,7 @@ public class _TMSStub
 
 	}
 
-	public void reset()
+	public boolean reset()
 	{
 		while(true)
 		{
@@ -536,7 +536,8 @@ public class _TMSStub
 				{
 					_os = _request( "reset", true);
 					_is = _invoke(_os);
-					return;
+					boolean _result = _is.read_boolean();
+					return _result;
 				}
 				catch( org.omg.CORBA.portable.RemarshalException _rx )
 					{
@@ -577,12 +578,13 @@ public class _TMSStub
 			if( _so == null )
 				continue;
 			TMSOperations _localServant = (TMSOperations)_so.servant;
+			boolean _result;
 			try
 			{
-				_localServant.reset();
+				_result = _localServant.reset();
 				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
 					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
-				return;
+				return _result;
 			}
 			catch (RuntimeException re) 
 			{
