@@ -85,20 +85,35 @@ public class TMSDriver extends TMSPOA {
 		// resolve the server object reference in the Naming service
 		tls = TLSHelper.narrow(nameService.resolve_str(tlsName));
 
-		tls.ping();
-
 		// Register the Sensor with the TLS
 		final MSData msData = tls.register_tms(zoneName);
 
 		// set the station name
-		name = msData.station_name + msData.region;
+		name = msData.station_name + "_" + msData.region;
 
 		// bind the Count object in the Naming service
 		NameComponent[] sName = nameService.to_name(name);
 		nameService.rebind(sName, server_ref);	
 
 		// create and store the current metadata
-		tlsData = new TLSData(tlsName, msData);		
+		tlsData = new TLSData(tlsName, msData);	
+		
+		// Log the successful connection
+		logger.info("Connected and assigned name: " + name + " by TLS.");
+
+		// Shutdown hook to remove tms from tls
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    if (!tls.remove_tms(msData)) {
+                        logger.error("Error: unable to unregister from TLS!");
+                    }
+                } catch (Exception e) {
+                    logger.error("Error: unable to unregister from TLS!");
+                }
+            }
+        });
 	}
 
 	@Override
@@ -149,7 +164,7 @@ public class TMSDriver extends TMSPOA {
             System.err.println("System is disconnected");
             return;
 		}
-        NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement);
+        NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement, tlsData.stationData.region, tlsData.stationData.station_name);
         try {
 			logger.info("ping"); 
 			tls.ping();

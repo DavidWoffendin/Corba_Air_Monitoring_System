@@ -1,13 +1,13 @@
 package com.u1654949.airnox.ls;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.u1654949.airnox.common.Constants;
 import com.u1654949.airnox.common.InputReader;
 import com.u1654949.airnox.common.Levels;
@@ -20,11 +20,14 @@ import com.u1654949.corba.ls.TLSHelper;
 import com.u1654949.corba.ls.TLSPOA;
 import com.u1654949.corba.mc.MCS;
 import com.u1654949.corba.mc.MCSHelper;
+import com.u1654949.corba.ms.TMS;
+import com.u1654949.corba.ms.TMSHelper;
 
 import org.omg.CORBA.*;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
+import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.PortableServer.*;
 import org.omg.PortableServer.POA;
 
@@ -37,7 +40,11 @@ public class TLSDriver extends TLSPOA {
 
     private final ConcurrentSkipListMap<String, ConcurrentSkipListMap<String, NoxReading>> regionMapping = new ConcurrentSkipListMap<>();
     private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
+    private final HashSet<String> theMonitoringStations = new HashSet<>();
+        
     private static final List<Alarm> alarmLog = new ArrayList<>();
+
+    private NamingContextExt nameService;
 
     private static HashMap<String, Levels> levels;
     private static InputReader console;
@@ -69,8 +76,7 @@ public class TLSDriver extends TLSPOA {
         }
 
         // Get a reference to the Naming service
-		org.omg.CORBA.Object nameServiceObj =
-        orb.resolve_initial_references (Constants.NAME_SERVICE);
+        org.omg.CORBA.Object nameServiceObj = orb.resolve_initial_references(Constants.NAME_SERVICE);
         if (nameServiceObj == null) {
             logger.error("nameServiceObj = null");
             return;
@@ -78,7 +84,7 @@ public class TLSDriver extends TLSPOA {
 
         // Use NamingContextExt which is part of the Interoperable
         // Naming Service (INS) specification.
-        NamingContextExt nameService = NamingContextExtHelper.narrow(nameServiceObj);
+        nameService = NamingContextExtHelper.narrow(nameServiceObj);
         if (nameService == null) {
             logger.error("nameService = null");
             return;
@@ -138,17 +144,9 @@ public class TLSDriver extends TLSPOA {
     }
 
     @Override
-    public MSData[] get_registered_tms() {
-        List<MSData> metaList = new ArrayList<>();
-        for (Map.Entry<String, ConcurrentSkipListMap<String, NoxReading>> regionMap : regionMapping.entrySet()) {
-            List<String> keySet = new ArrayList<>(regionMap.getValue().keySet());
-            Collections.sort(keySet);
-            for (String key : keySet) {
-                metaList.add(new MSData(regionMap.getKey(), key,
-                       getLevelsForRegion(levels, regionMap.getKey()).getAlarmLevel()));
-            }
-        }
-        return metaList.toArray(new MSData[metaList.size()]);
+    public String[] get_known_stations() {
+        return theMonitoringStations.toArray(new String[theMonitoringStations.size()]);
+        
     }
 
     @Override
@@ -176,6 +174,10 @@ public class TLSDriver extends TLSPOA {
         } else {
             sensorLevels = levels.get("default");
         }
+
+        String stationName = id + "_" + region;
+
+        theMonitoringStations.add(stationName);
         return new MSData(region, id, sensorLevels.getAlarmLevel());
     }
 
@@ -198,6 +200,7 @@ public class TLSDriver extends TLSPOA {
             avg += regionMap.getValue().reading_value;
         }     
         int size = region.size();
+        System.out.println(size);
         avg = Math.round((avg / size) * 100) / 100;
         logger.info("" + avg);
 
@@ -210,11 +213,11 @@ public class TLSDriver extends TLSPOA {
             return;
         }
 
-        if((avg >= alarm_level && size > 2) || (avg > alarm_level && size >= 1)){
+        if((avg >= alarm_level && size > 2) || (avg > alarm_level && size > 1)){
             logger.warn("Average above alert level in region `{}`, forwarding to TMC...", new_alarm.data.stationData.region);
             new_alarm.reading.reading_value = avg;
             server.receive_alarm(new_alarm);
-            alarmStates.put(new_alarm.data.stationData.region, new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg)));
+            alarmStates.put(new_alarm.data.stationData.region, new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg, new_alarm.data.stationData.region, new_alarm.data.stationData.station_name)));
         } else {
             server.cancel_alarm(new TLSData(name, new_alarm.data.stationData));
             
@@ -232,11 +235,37 @@ public class TLSDriver extends TLSPOA {
             regionMapping.get(data.region).remove(data.station_name);
             return true;
         }
+        String stationName = data.station_name + "_" + data.region;
+        theMonitoringStations.remove(stationName);
         return false;
+    }
+
+    @Override
+    public NoxReading[] take_readings() {
+        NoxReading[] noxReadings  = new NoxReading[theMonitoringStations.size()];
+        int size = 0;
+        for (String station : theMonitoringStations) {
+            TMS tempServer = get_connected_tms(station);
+            NoxReading tempReading = tempServer.get_reading();
+            System.out.println(tempReading.reading_value);
+            noxReadings[size] = tempReading;
+            size++;
+        }
+        return noxReadings;
+    }
+
+    public TMS get_connected_tms(String name) {
+        TMS tempServer = null;
+        try {
+            tempServer = TMSHelper.narrow(nameService.resolve_str(name));
+        } catch (CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName | org.omg.CosNaming.NamingContextPackage.NotFound e) {
+            logger.error("nameServiceObj = null" + e);
+        }
+        return tempServer;
     }
     
     private HashMap<String, Levels> setLevel(){
-        final Levels def = new Levels(Constants.DEFAULT_WARNING_LEVEL, Constants.DEFAULT_ALERT_LEVEL);
+        final Levels def = new Levels(Constants.DEFAULT_ALERT_LEVEL, Constants.DEFAULT_WARNING_LEVEL);
         
         logger.info("Set default warning level to {}, alert level to {}", def.getWarningLevel(), def.getAlarmLevel());
 

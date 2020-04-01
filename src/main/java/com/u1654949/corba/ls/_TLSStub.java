@@ -5,7 +5,7 @@ package com.u1654949.corba.ls;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 28, 2020, 11:31:38 AM
+ * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
 public class _TLSStub
@@ -105,7 +105,7 @@ public class _TLSStub
 
 	}
 
-	public com.u1654949.corba.common.MSData register_tms(java.lang.String region)
+	public com.u1654949.corba.common.Alarm[] alarm_log()
 	{
 		while(true)
 		{
@@ -115,12 +115,9 @@ public class _TLSStub
 				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_os = _request( "register_tms", true);
-					java.lang.String tmpResult7 = region;
-_os.write_string( tmpResult7 );
+					_os = _request("_get_alarm_log",true);
 					_is = _invoke(_os);
-					com.u1654949.corba.common.MSData _result = com.u1654949.corba.common.MSDataHelper.read(_is);
-					return _result;
+					return com.u1654949.corba.common.AlarmsHelper.read(_is);
 				}
 				catch( org.omg.CORBA.portable.RemarshalException _rx )
 					{
@@ -131,67 +128,68 @@ _os.write_string( tmpResult7 );
 					String _id = _ax.getId();
 					try
 					{
-							_ax.getInputStream().close();
+						_ax.getInputStream().close();
 					}
 					catch (java.io.IOException e)
 					{
 						throw new RuntimeException("Unexpected exception " + e.toString() );
 					}
-					throw new RuntimeException("Unexpected exception " + _id );
-			}
-			finally
-			{
-				if (_os != null)
-				{
-					try
-					{
-						_os.close();
-					}
-					catch (java.io.IOException e)
-					{
-						throw new RuntimeException("Unexpected exception " + e.toString() );
-					}
+						throw new RuntimeException("Unexpected exception " + _id );
 				}
-				this._releaseReply(_is);
+				finally
+				{
+					if (_os != null)
+					{
+						try
+						{
+							_os.close();
+						}
+						catch (java.io.IOException e)
+						{
+							throw new RuntimeException("Unexpected exception " + e.toString() );
+						}
+					}
+					this._releaseReply(_is);
+				}
 			}
-		}
-		else
-		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "register_tms", _opsClass );
-			if( _so == null )
-				continue;
-			TLSOperations _localServant = (TLSOperations)_so.servant;
-			com.u1654949.corba.common.MSData _result;
-			try
+
+			else
 			{
-				_result = _localServant.register_tms(region);
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
-				return _result;
+				org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "_get_alarm_log", _opsClass);
+				if( _so == null )
+					continue;
+				TLSOperations _localServant = (TLSOperations)_so.servant;
+				com.u1654949.corba.common.Alarm[] _result;
+				try
+				{
+					_result = _localServant.alarm_log();
+					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+						((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
+						return _result;
+				}
+				catch (RuntimeException re) 
+				{
+					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+						((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
+					throw re;
+				}
+				catch (java.lang.Error err) 
+				{
+					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+						((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
+					throw err;
+				}
+				finally
+				{
+					_servant_postinvoke(_so);
+				}
 			}
-			catch (RuntimeException re) 
-			{
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
-				throw re;
-			}
-			catch (java.lang.Error err) 
-			{
-				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
-				throw err;
-			}
-			finally
-			{
-				_servant_postinvoke(_so);
-			}
-		}
 
 		}
 
 	}
 
-	public com.u1654949.corba.common.MSData[] get_registered_tms()
+	public boolean ping()
 	{
 		while(true)
 		{
@@ -201,9 +199,9 @@ _os.write_string( tmpResult7 );
 				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_os = _request( "get_registered_tms", true);
+					_os = _request( "ping", true);
 					_is = _invoke(_os);
-					com.u1654949.corba.common.MSData[] _result = com.u1654949.corba.common.StationsHelper.read(_is);
+					boolean _result = _is.read_boolean();
 					return _result;
 				}
 				catch( org.omg.CORBA.portable.RemarshalException _rx )
@@ -241,14 +239,14 @@ _os.write_string( tmpResult7 );
 		}
 		else
 		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "get_registered_tms", _opsClass );
+			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "ping", _opsClass );
 			if( _so == null )
 				continue;
 			TLSOperations _localServant = (TLSOperations)_so.servant;
-			com.u1654949.corba.common.MSData[] _result;
+			boolean _result;
 			try
 			{
-				_result = _localServant.get_registered_tms();
+				_result = _localServant.ping();
 				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
 					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
 				return _result;
@@ -359,7 +357,7 @@ _os.write_string( tmpResult7 );
 
 	}
 
-	public boolean ping()
+	public com.u1654949.corba.common.MSData register_tms(java.lang.String region)
 	{
 		while(true)
 		{
@@ -369,9 +367,11 @@ _os.write_string( tmpResult7 );
 				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_os = _request( "ping", true);
+					_os = _request( "register_tms", true);
+					java.lang.String tmpResult10 = region;
+_os.write_string( tmpResult10 );
 					_is = _invoke(_os);
-					boolean _result = _is.read_boolean();
+					com.u1654949.corba.common.MSData _result = com.u1654949.corba.common.MSDataHelper.read(_is);
 					return _result;
 				}
 				catch( org.omg.CORBA.portable.RemarshalException _rx )
@@ -409,14 +409,14 @@ _os.write_string( tmpResult7 );
 		}
 		else
 		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "ping", _opsClass );
+			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "register_tms", _opsClass );
 			if( _so == null )
 				continue;
 			TLSOperations _localServant = (TLSOperations)_so.servant;
-			boolean _result;
+			com.u1654949.corba.common.MSData _result;
 			try
 			{
-				_result = _localServant.ping();
+				_result = _localServant.register_tms(region);
 				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
 					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
 				return _result;
@@ -443,7 +443,7 @@ _os.write_string( tmpResult7 );
 
 	}
 
-	public com.u1654949.corba.common.Alarm[] alarm_log()
+	public void receive_alarm(com.u1654949.corba.common.Alarm new_alarm)
 	{
 		while(true)
 		{
@@ -453,9 +453,10 @@ _os.write_string( tmpResult7 );
 				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_os = _request("_get_alarm_log",true);
+					_os = _request( "receive_alarm", true);
+					com.u1654949.corba.common.AlarmHelper.write(_os,new_alarm);
 					_is = _invoke(_os);
-					return com.u1654949.corba.common.AlarmsHelper.read(_is);
+					return;
 				}
 				catch( org.omg.CORBA.portable.RemarshalException _rx )
 					{
@@ -466,62 +467,144 @@ _os.write_string( tmpResult7 );
 					String _id = _ax.getId();
 					try
 					{
-						_ax.getInputStream().close();
+							_ax.getInputStream().close();
 					}
 					catch (java.io.IOException e)
 					{
 						throw new RuntimeException("Unexpected exception " + e.toString() );
 					}
-						throw new RuntimeException("Unexpected exception " + _id );
-				}
-				finally
-				{
-					if (_os != null)
-					{
-						try
-						{
-							_os.close();
-						}
-						catch (java.io.IOException e)
-						{
-							throw new RuntimeException("Unexpected exception " + e.toString() );
-						}
-					}
-					this._releaseReply(_is);
-				}
+					throw new RuntimeException("Unexpected exception " + _id );
 			}
-
-			else
+			finally
 			{
-				org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "_get_alarm_log", _opsClass);
-				if( _so == null )
-					continue;
-				TLSOperations _localServant = (TLSOperations)_so.servant;
-				com.u1654949.corba.common.Alarm[] _result;
+				if (_os != null)
+				{
+					try
+					{
+						_os.close();
+					}
+					catch (java.io.IOException e)
+					{
+						throw new RuntimeException("Unexpected exception " + e.toString() );
+					}
+				}
+				this._releaseReply(_is);
+			}
+		}
+		else
+		{
+			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "receive_alarm", _opsClass );
+			if( _so == null )
+				continue;
+			TLSOperations _localServant = (TLSOperations)_so.servant;
+			try
+			{
+				_localServant.receive_alarm(new_alarm);
+				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
+				return;
+			}
+			catch (RuntimeException re) 
+			{
+				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
+				throw re;
+			}
+			catch (java.lang.Error err) 
+			{
+				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
+				throw err;
+			}
+			finally
+			{
+				_servant_postinvoke(_so);
+			}
+		}
+
+		}
+
+	}
+
+	public com.u1654949.corba.common.NoxReading[] take_readings()
+	{
+		while(true)
+		{
+			if(! this._is_local())
+			{
+				org.omg.CORBA.portable.InputStream _is = null;
+				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_result = _localServant.alarm_log();
-					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-						((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
-						return _result;
+					_os = _request( "take_readings", true);
+					_is = _invoke(_os);
+					com.u1654949.corba.common.NoxReading[] _result = com.u1654949.corba.common.Nox_ReadingsHelper.read(_is);
+					return _result;
 				}
-				catch (RuntimeException re) 
+				catch( org.omg.CORBA.portable.RemarshalException _rx )
+					{
+						continue;
+					}
+				catch( org.omg.CORBA.portable.ApplicationException _ax )
 				{
-					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-						((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
-					throw re;
-				}
-				catch (java.lang.Error err) 
-				{
-					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
-						((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
-					throw err;
-				}
-				finally
-				{
-					_servant_postinvoke(_so);
-				}
+					String _id = _ax.getId();
+					try
+					{
+							_ax.getInputStream().close();
+					}
+					catch (java.io.IOException e)
+					{
+						throw new RuntimeException("Unexpected exception " + e.toString() );
+					}
+					throw new RuntimeException("Unexpected exception " + _id );
 			}
+			finally
+			{
+				if (_os != null)
+				{
+					try
+					{
+						_os.close();
+					}
+					catch (java.io.IOException e)
+					{
+						throw new RuntimeException("Unexpected exception " + e.toString() );
+					}
+				}
+				this._releaseReply(_is);
+			}
+		}
+		else
+		{
+			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "take_readings", _opsClass );
+			if( _so == null )
+				continue;
+			TLSOperations _localServant = (TLSOperations)_so.servant;
+			com.u1654949.corba.common.NoxReading[] _result;
+			try
+			{
+				_result = _localServant.take_readings();
+				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
+				return _result;
+			}
+			catch (RuntimeException re) 
+			{
+				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
+				throw re;
+			}
+			catch (java.lang.Error err) 
+			{
+				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+					((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
+				throw err;
+			}
+			finally
+			{
+				_servant_postinvoke(_so);
+			}
+		}
 
 		}
 
@@ -612,7 +695,7 @@ _os.write_string( tmpResult7 );
 
 	}
 
-	public void receive_alarm(com.u1654949.corba.common.Alarm new_alarm)
+	public java.lang.String[] get_known_stations()
 	{
 		while(true)
 		{
@@ -622,10 +705,10 @@ _os.write_string( tmpResult7 );
 				org.omg.CORBA.portable.OutputStream _os = null;
 				try
 				{
-					_os = _request( "receive_alarm", true);
-					com.u1654949.corba.common.AlarmHelper.write(_os,new_alarm);
+					_os = _request( "get_known_stations", true);
 					_is = _invoke(_os);
-					return;
+					java.lang.String[] _result = com.u1654949.corba.common.TMS_ListHelper.read(_is);
+					return _result;
 				}
 				catch( org.omg.CORBA.portable.RemarshalException _rx )
 					{
@@ -662,16 +745,17 @@ _os.write_string( tmpResult7 );
 		}
 		else
 		{
-			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "receive_alarm", _opsClass );
+			org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "get_known_stations", _opsClass );
 			if( _so == null )
 				continue;
 			TLSOperations _localServant = (TLSOperations)_so.servant;
+			java.lang.String[] _result;
 			try
 			{
-				_localServant.receive_alarm(new_alarm);
+				_result = _localServant.get_known_stations();
 				if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
 					((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
-				return;
+				return _result;
 			}
 			catch (RuntimeException re) 
 			{

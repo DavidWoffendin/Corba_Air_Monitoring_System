@@ -9,6 +9,8 @@ module com {
                 struct NoxReading {
                     long long time;
                     long reading_value;
+                    string region;
+                    string station_name;
                 };
 
                 struct MSData {
@@ -30,7 +32,7 @@ module com {
                 typedef sequence<NoxReading> Nox_Readings;
                 typedef sequence<Alarm> Alarms;
                 typedef sequence<string> Region;                            
-                typedef sequence<MSData> Stations;
+                typedef sequence<string> TMS_List;
                 typedef sequence<string> TLS_List;
             };
 
@@ -59,8 +61,9 @@ module com {
                     boolean ping();
 
                     common::Alarms get_current_state();
-                    common::Stations get_registered_tms();
+                    common::TMS_List get_known_stations();
                     common::MSData register_tms(in string region);
+                    common::Nox_Readings take_readings();
 
                     void receive_alarm(in common::Alarm new_alarm);
                     boolean remove_tms(in common::MSData data);
@@ -83,7 +86,7 @@ module com {
 
                     common::Alarms get_alarms(in string id);
                     common::Alarms get_County_state(in string county);
-                    common::TLS_List get_known_stations();
+                    common::TLS_List get_known_servers();
                     ls::TLS get_connected_tls(in string name);
                 };
 

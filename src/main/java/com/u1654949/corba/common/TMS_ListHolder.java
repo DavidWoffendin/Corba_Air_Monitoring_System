@@ -1,34 +1,34 @@
 package com.u1654949.corba.common;
 
 /**
- * Generated from IDL alias "Region".
+ * Generated from IDL alias "TMS_List".
  *
  * @author JacORB IDL compiler V 3.9
  * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
-public final class RegionHolder
+public final class TMS_ListHolder
 	implements org.omg.CORBA.portable.Streamable
 {
 	public java.lang.String[] value;
 
-	public RegionHolder ()
+	public TMS_ListHolder ()
 	{
 	}
-	public RegionHolder (final java.lang.String[] initial)
+	public TMS_ListHolder (final java.lang.String[] initial)
 	{
 		value = initial;
 	}
 	public org.omg.CORBA.TypeCode _type ()
 	{
-		return RegionHelper.type ();
+		return TMS_ListHelper.type ();
 	}
 	public void _read (final org.omg.CORBA.portable.InputStream in)
 	{
-		value = RegionHelper.read (in);
+		value = TMS_ListHelper.read (in);
 	}
 	public void _write (final org.omg.CORBA.portable.OutputStream out)
 	{
-		RegionHelper.write (out,value);
+		TMS_ListHelper.write (out,value);
 	}
 }

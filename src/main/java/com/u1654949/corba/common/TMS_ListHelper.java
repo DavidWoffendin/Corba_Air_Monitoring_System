@@ -1,13 +1,13 @@
 package com.u1654949.corba.common;
 
 /**
- * Generated from IDL alias "TLS_List".
+ * Generated from IDL alias "TMS_List".
  *
  * @author JacORB IDL compiler V 3.9
  * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
-public abstract class TLS_ListHelper
+public abstract class TMS_ListHelper
 {
 	private volatile static org.omg.CORBA.TypeCode _type;
 
@@ -30,11 +30,11 @@ public abstract class TLS_ListHelper
 	{
 		if (_type == null)
 		{
-			synchronized(TLS_ListHelper.class)
+			synchronized(TMS_ListHelper.class)
 			{
 				if (_type == null)
 				{
-					_type = org.omg.CORBA.ORB.init().create_alias_tc(com.u1654949.corba.common.TLS_ListHelper.id(), "TLS_List",org.omg.CORBA.ORB.init().create_sequence_tc(0, org.omg.CORBA.ORB.init().create_string_tc(0)));
+					_type = org.omg.CORBA.ORB.init().create_alias_tc(com.u1654949.corba.common.TMS_ListHelper.id(), "TMS_List",org.omg.CORBA.ORB.init().create_sequence_tc(0, org.omg.CORBA.ORB.init().create_string_tc(0)));
 				}
 			}
 		}
@@ -43,24 +43,24 @@ public abstract class TLS_ListHelper
 
 	public static String id()
 	{
-		return "IDL:com/u1654949/corba/common/TLS_List:1.0";
+		return "IDL:com/u1654949/corba/common/TMS_List:1.0";
 	}
 	public static java.lang.String[] read (final org.omg.CORBA.portable.InputStream _in)
 	{
 		java.lang.String[] _result;
-		int _l_result4 = _in.read_long();
+		int _l_result3 = _in.read_long();
 		try
 		{
 			 int x = _in.available();
-			 if ( x > 0 && _l_result4 > x )
+			 if ( x > 0 && _l_result3 > x )
 				{
-					throw new org.omg.CORBA.MARSHAL("Sequence length too large. Only " + x + " available and trying to assign " + _l_result4);
+					throw new org.omg.CORBA.MARSHAL("Sequence length too large. Only " + x + " available and trying to assign " + _l_result3);
 				}
 		}
 		catch (java.io.IOException e)
 		{
 		}
-		_result = new java.lang.String[_l_result4];
+		_result = new java.lang.String[_l_result3];
 		for (int i=0;i<_result.length;i++)
 		{
 			_result[i]=_in.read_string();
@@ -75,8 +75,8 @@ public abstract class TLS_ListHelper
 		_out.write_long(_s.length);
 		for (int i=0; i<_s.length;i++)
 		{
-			java.lang.String tmpResult7 = _s[i];
-_out.write_string( tmpResult7 );
+			java.lang.String tmpResult6 = _s[i];
+_out.write_string( tmpResult6 );
 		}
 
 	}

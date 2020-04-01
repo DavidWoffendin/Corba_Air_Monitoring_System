@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 28, 2020, 11:31:38 AM
+ * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
 public class TLSPOATie
@@ -57,19 +57,9 @@ public class TLSPOATie
 		return _delegate.name();
 	}
 
-	public com.u1654949.corba.common.MSData register_tms(java.lang.String region)
+	public com.u1654949.corba.common.Alarm[] alarm_log()
 	{
-		return _delegate.register_tms(region);
-	}
-
-	public com.u1654949.corba.common.MSData[] get_registered_tms()
-	{
-		return _delegate.get_registered_tms();
-	}
-
-	public com.u1654949.corba.common.Alarm[] get_current_state()
-	{
-		return _delegate.get_current_state();
+		return _delegate.alarm_log();
 	}
 
 	public boolean ping()
@@ -77,9 +67,24 @@ public class TLSPOATie
 		return _delegate.ping();
 	}
 
-	public com.u1654949.corba.common.Alarm[] alarm_log()
+	public com.u1654949.corba.common.Alarm[] get_current_state()
 	{
-		return _delegate.alarm_log();
+		return _delegate.get_current_state();
+	}
+
+	public com.u1654949.corba.common.MSData register_tms(java.lang.String region)
+	{
+		return _delegate.register_tms(region);
+	}
+
+	public void receive_alarm(com.u1654949.corba.common.Alarm new_alarm)
+	{
+_delegate.receive_alarm(new_alarm);
+	}
+
+	public com.u1654949.corba.common.NoxReading[] take_readings()
+	{
+		return _delegate.take_readings();
 	}
 
 	public boolean remove_tms(com.u1654949.corba.common.MSData data)
@@ -87,9 +92,9 @@ public class TLSPOATie
 		return _delegate.remove_tms(data);
 	}
 
-	public void receive_alarm(com.u1654949.corba.common.Alarm new_alarm)
+	public java.lang.String[] get_known_stations()
 	{
-_delegate.receive_alarm(new_alarm);
+		return _delegate.get_known_stations();
 	}
 
 }

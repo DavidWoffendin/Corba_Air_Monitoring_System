@@ -1,6 +1,6 @@
 package com.u1654949.airnox.mc;
 
-public class TMC {
+public class TMCInterface {
 
     private static TMCDriver tmcDriver;
 

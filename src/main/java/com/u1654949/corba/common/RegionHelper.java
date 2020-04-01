@@ -4,7 +4,7 @@ package com.u1654949.corba.common;
  * Generated from IDL alias "Region".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 28, 2020, 11:31:38 AM
+ * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
 public abstract class RegionHelper
@@ -75,8 +75,8 @@ public abstract class RegionHelper
 		_out.write_long(_s.length);
 		for (int i=0; i<_s.length;i++)
 		{
-			java.lang.String tmpResult3 = _s[i];
-_out.write_string( tmpResult3 );
+			java.lang.String tmpResult5 = _s[i];
+_out.write_string( tmpResult5 );
 		}
 
 	}

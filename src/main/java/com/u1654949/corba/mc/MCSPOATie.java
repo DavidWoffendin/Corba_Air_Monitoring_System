@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 28, 2020, 11:31:38 AM
+ * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
 public class MCSPOATie
@@ -77,6 +77,11 @@ public class MCSPOATie
 		return _delegate.get_connected_tls(name);
 	}
 
+	public java.lang.String[] get_known_servers()
+	{
+		return _delegate.get_known_servers();
+	}
+
 	public com.u1654949.corba.common.Alarm[] get_alarms(java.lang.String id)
 	{
 		return _delegate.get_alarms(id);
@@ -90,11 +95,6 @@ _delegate.cancel_alarm(tls_data);
 	public void receive_alarm(com.u1654949.corba.common.Alarm new_alarm)
 	{
 _delegate.receive_alarm(new_alarm);
-	}
-
-	public java.lang.String[] get_known_stations()
-	{
-		return _delegate.get_known_stations();
 	}
 
 	public boolean register_tls_connection(java.lang.String name)

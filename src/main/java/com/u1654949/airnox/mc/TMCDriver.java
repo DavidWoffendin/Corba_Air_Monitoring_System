@@ -15,7 +15,6 @@ import java.util.List;
 import com.u1654949.airnox.common.Constants;
 
 import org.omg.CORBA.*;
-import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -29,8 +28,10 @@ import org.slf4j.LoggerFactory;
 
 class TMCDriver extends MCSPOA {
 
-    private static final Logger logger = LoggerFactory.getLogger(TMC.class);
-    private final HashSet<String> theLocalStations = new HashSet<>();
+    private static final Logger logger = LoggerFactory.getLogger(MCS.class);
+    private final HashSet<String> theLocalServers = new HashSet<>();
+
+    private NamingContextExt nameService;
 
     private final List<Alarm> alarms = new ArrayList<>();
 
@@ -49,9 +50,6 @@ class TMCDriver extends MCSPOA {
             logger.error("Unable to retrieve POA!");
             return;
         }
-        // get object reference from the servant
-        org.omg.CORBA.Object ref = rootpoa.servant_to_reference(this);
-        MCS server_ref = MCSHelper.narrow(ref);
 
         // Get a reference to the Naming service
         org.omg.CORBA.Object nameServiceObj = orb.resolve_initial_references(Constants.NAME_SERVICE);
@@ -59,13 +57,18 @@ class TMCDriver extends MCSPOA {
             logger.error("nameServiceObj = null");
             return;
         }
+
         // Use NamingContextExt which is part of the Interoperable
         // Naming Service (INS) specification.
-        NamingContextExt nameService = NamingContextExtHelper.narrow(nameServiceObj);
+        nameService = NamingContextExtHelper.narrow(nameServiceObj);
         if (nameService == null) {
             logger.error("nameService = null");
             return;
         }
+
+        // get object reference from the servant
+        org.omg.CORBA.Object ref = rootpoa.servant_to_reference(this);
+        MCS server_ref = MCSHelper.narrow(ref);
 
         // bind the Count object in the Naming service
         NameComponent[] countName = nameService.to_name(Constants.THE_MONITORING_CENTRE);
@@ -145,14 +148,14 @@ class TMCDriver extends MCSPOA {
     @Override
     public boolean register_tls_connection(String name) {
         logger.info("Successfully received connection from TLS `{}`", name);
-        theLocalStations.add(name);
+        theLocalServers.add(name);
         return true;
     }
 
     @Override
     public boolean remove_tls_connection(String name) {
         logger.info("Removed connection from TLS `{}`", name);
-        theLocalStations.remove(name);
+        theLocalServers.remove(name);
         return true;
     }
 
@@ -172,26 +175,18 @@ class TMCDriver extends MCSPOA {
     }
 
     @Override
-    public String[] get_known_stations() {
-        return theLocalStations.toArray(new String[theLocalStations.size()]);
+    public String[] get_known_servers() {
+        return theLocalServers.toArray(new String[theLocalServers.size()]);
     }
 
     @Override
     public TLS get_connected_tls(String name) {
-
         TLS tempServer = null;
-
-        // Get a reference to the Naming service
-        org.omg.CORBA.Object nameServiceObj;
         try {
-            nameServiceObj = orb.resolve_initial_references(Constants.NAME_SERVICE);
-            NamingContextExt nameService = NamingContextExtHelper.narrow(nameServiceObj);
             tempServer = TLSHelper.narrow(nameService.resolve_str(name));
-
-        } catch (InvalidName | NotFound | CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName e) {
+        } catch (NotFound | CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName e) {
             logger.error("nameServiceObj = null" + e);
         }
-
         return tempServer;
     }
 

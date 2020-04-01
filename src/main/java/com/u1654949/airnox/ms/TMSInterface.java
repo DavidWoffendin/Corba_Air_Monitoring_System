@@ -6,7 +6,7 @@ import java.util.Scanner;
 import com.u1654949.corba.common.NoxReading;
 
 
-public class TMS {
+public class TMSInterface {
 
     private static TMSDriver tmsDriver;
 
@@ -65,7 +65,7 @@ public class TMS {
             }
             if (input.equals("current_reading")) {
                 NoxReading reading = tmsDriver.get_reading();
-                System.out.println("Reading value at" + reading.reading_value);                
+                System.out.println("Current Reading value at " + reading.reading_value);                
                 System.out.println("\n");
                 continue;
             }

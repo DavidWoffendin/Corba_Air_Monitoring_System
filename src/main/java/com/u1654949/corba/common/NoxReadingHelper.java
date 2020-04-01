@@ -5,7 +5,7 @@ package com.u1654949.corba.common;
  * Generated from IDL struct "NoxReading".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Mar 28, 2020, 11:31:38 AM
+ * @version generated at Apr 1, 2020, 12:42:52 PM
  */
 
 public abstract class NoxReadingHelper
@@ -19,7 +19,7 @@ public abstract class NoxReadingHelper
 			{
 				if (_type == null)
 				{
-					_type = org.omg.CORBA.ORB.init().create_struct_tc(com.u1654949.corba.common.NoxReadingHelper.id(),"NoxReading",new org.omg.CORBA.StructMember[]{new org.omg.CORBA.StructMember("time", org.omg.CORBA.ORB.init().get_primitive_tc(org.omg.CORBA.TCKind.from_int(23)), null),new org.omg.CORBA.StructMember("reading_value", org.omg.CORBA.ORB.init().get_primitive_tc(org.omg.CORBA.TCKind.from_int(3)), null)});
+					_type = org.omg.CORBA.ORB.init().create_struct_tc(com.u1654949.corba.common.NoxReadingHelper.id(),"NoxReading",new org.omg.CORBA.StructMember[]{new org.omg.CORBA.StructMember("time", org.omg.CORBA.ORB.init().get_primitive_tc(org.omg.CORBA.TCKind.from_int(23)), null),new org.omg.CORBA.StructMember("reading_value", org.omg.CORBA.ORB.init().get_primitive_tc(org.omg.CORBA.TCKind.from_int(3)), null),new org.omg.CORBA.StructMember("region", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("station_name", org.omg.CORBA.ORB.init().create_string_tc(0), null)});
 				}
 			}
 		}
@@ -61,11 +61,17 @@ public abstract class NoxReadingHelper
 		com.u1654949.corba.common.NoxReading result = new com.u1654949.corba.common.NoxReading();
 		result.time=in.read_longlong();
 		result.reading_value=in.read_long();
+		result.region=in.read_string();
+		result.station_name=in.read_string();
 		return result;
 	}
 	public static void write (final org.omg.CORBA.portable.OutputStream out, final com.u1654949.corba.common.NoxReading s)
 	{
 		out.write_longlong(s.time);
 		out.write_long(s.reading_value);
+		java.lang.String tmpResult0 = s.region;
+out.write_string( tmpResult0 );
+		java.lang.String tmpResult1 = s.station_name;
+out.write_string( tmpResult1 );
 	}
 }
