@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import com.u1654949.airnox.common.Constants;
-import com.u1654949.airnox.common.Levels;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.u1654949.airnox.Constants;
 import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.MSData;
 import com.u1654949.corba.common.NoxReading;
@@ -45,15 +45,17 @@ public class TLSDriver extends TLSPOA {
     private static HashMap<String, Levels> levels;
     private static MCS server;
     private static String name;
+    private static String location;    
 
     Scanner scanner = new Scanner(System.in);
 
     private final ORB orb;
 
-    public TLSDriver(String[] args, String sName) throws Exception {
+    public TLSDriver(String[] args, String sName, String sLocation) throws Exception {
         levels = setLevel();
-
+        
         name = sName;
+        location = sLocation;
 
         logger.info("Registered Local Monitoring Station: {}", name);
 
@@ -114,6 +116,16 @@ public class TLSDriver extends TLSPOA {
     }
 
     /**
+     * Retrieves the location of this TLS.
+     *
+     * @return the String location
+     */
+    @Override
+    public String location() {
+        return location;
+    }
+
+    /**
      * Simple accessor method to check connection.
      *
      * @return true
@@ -171,7 +183,7 @@ public class TLSDriver extends TLSPOA {
             sensorLevels = levels.get("default");
         }
 
-        String stationName = id + "_" + region;
+        String stationName = id + "_" + region + "_" + name;
 
         theMonitoringStations.add(stationName);
         return new MSData(region, id, sensorLevels.getAlarmLevel());
@@ -214,7 +226,7 @@ public class TLSDriver extends TLSPOA {
         }
 
         if ((avg >= alarm_level && size > 2) || (avg > alarm_level && size > 1)) {
-            logger.warn("Average above alert level in region `{}`, forwarding to TMC...",
+            logger.warn("Average above alarm level in region `{}`, forwarding to TMC...",
                     new_alarm.data.stationData.region);
             new_alarm.reading.reading_value = avg;
             server.receive_alarm(new_alarm);
@@ -222,7 +234,7 @@ public class TLSDriver extends TLSPOA {
                     new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg,
                             new_alarm.data.stationData.region, new_alarm.data.stationData.station_name, name)));
         } else {
-            server.cancel_alarm(new TLSData(name, new_alarm.data.stationData));
+            server.cancel_alarm(new TLSData(name, location, new_alarm.data.stationData));
 
             if (alarmStates.containsKey(new_alarm.data.stationData.region)) {
                 logger.info("Removed alarm state for region `{}`", new_alarm.data.stationData.region);
@@ -287,7 +299,7 @@ public class TLSDriver extends TLSPOA {
     }
 
     private HashMap<String, Levels> setLevel() {
-        final Levels def = new Levels(Constants.DEFAULT_ALERT_LEVEL, Constants.DEFAULT_WARNING_LEVEL);
+        final Levels def = new Levels(Constants.DEFAULT_ALARM_LEVEL, Constants.DEFAULT_WARNING_LEVEL);
 
         logger.info("Set default warning level to {}, alert level to {}", def.getWarningLevel(), def.getAlarmLevel());
 
@@ -302,3 +314,37 @@ public class TLSDriver extends TLSPOA {
         return !levels.containsKey(zone) ? levels.get("default") : levels.get(zone);
     }
 }
+
+class Levels {
+
+    private Integer alarm_level;
+    private Integer warning_level;
+
+    public Levels(){
+        // no-op
+    }
+
+    public Levels(int alarm_level, int warning_level){
+        this.alarm_level = alarm_level;
+        this.warning_level = warning_level;
+    }
+
+    public Integer getAlarmLevel(){
+        return alarm_level;
+    }
+
+    public Integer getWarningLevel(){
+        return warning_level;
+    }
+
+    @JsonSetter("alarm_level")
+    public void setAlarmLevel(int alarm_level){
+        this.alarm_level = alarm_level;
+    }
+
+    @JsonSetter("warning_level")
+    public void setWarningLevel(int warning_level){
+        this.warning_level = warning_level;
+    }
+
+} 

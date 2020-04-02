@@ -5,7 +5,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public class _MCSStub
@@ -32,8 +32,8 @@ public class _MCSStub
 				try
 				{
 					_os = _request( "register_tls_connection", true);
-					java.lang.String tmpResult13 = name;
-_os.write_string( tmpResult13 );
+					java.lang.String tmpResult15 = name;
+_os.write_string( tmpResult15 );
 					_is = _invoke(_os);
 					boolean _result = _is.read_boolean();
 					return _result;
@@ -286,8 +286,8 @@ _os.write_string( tmpResult13 );
 				try
 				{
 					_os = _request( "remove_tls_connection", true);
-					java.lang.String tmpResult14 = name;
-_os.write_string( tmpResult14 );
+					java.lang.String tmpResult16 = name;
+_os.write_string( tmpResult16 );
 					_is = _invoke(_os);
 					boolean _result = _is.read_boolean();
 					return _result;

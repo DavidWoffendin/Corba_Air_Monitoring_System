@@ -4,7 +4,7 @@ package com.u1654949.corba.common;
  * Generated from IDL alias "TMS_List".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public abstract class TMS_ListHelper
@@ -75,8 +75,8 @@ public abstract class TMS_ListHelper
 		_out.write_long(_s.length);
 		for (int i=0; i<_s.length;i++)
 		{
-			java.lang.String tmpResult7 = _s[i];
-_out.write_string( tmpResult7 );
+			java.lang.String tmpResult8 = _s[i];
+_out.write_string( tmpResult8 );
 		}
 
 	}

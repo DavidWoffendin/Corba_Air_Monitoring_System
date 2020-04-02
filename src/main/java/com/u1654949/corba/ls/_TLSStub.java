@@ -5,7 +5,7 @@ package com.u1654949.corba.ls;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public class _TLSStub
@@ -368,8 +368,8 @@ public class _TLSStub
 				try
 				{
 					_os = _request( "register_tms", true);
-					java.lang.String tmpResult11 = region;
-_os.write_string( tmpResult11 );
+					java.lang.String tmpResult12 = region;
+_os.write_string( tmpResult12 );
 					_is = _invoke(_os);
 					com.u1654949.corba.common.MSData _result = com.u1654949.corba.common.MSDataHelper.read(_is);
 					return _result;
@@ -690,6 +690,90 @@ _os.write_string( tmpResult11 );
 				_servant_postinvoke(_so);
 			}
 		}
+
+		}
+
+	}
+
+	public java.lang.String location()
+	{
+		while(true)
+		{
+			if(! this._is_local())
+			{
+				org.omg.CORBA.portable.InputStream _is = null;
+				org.omg.CORBA.portable.OutputStream _os = null;
+				try
+				{
+					_os = _request("_get_location",true);
+					_is = _invoke(_os);
+					return _is.read_string();
+				}
+				catch( org.omg.CORBA.portable.RemarshalException _rx )
+					{
+						continue;
+					}
+				catch( org.omg.CORBA.portable.ApplicationException _ax )
+				{
+					String _id = _ax.getId();
+					try
+					{
+						_ax.getInputStream().close();
+					}
+					catch (java.io.IOException e)
+					{
+						throw new RuntimeException("Unexpected exception " + e.toString() );
+					}
+						throw new RuntimeException("Unexpected exception " + _id );
+				}
+				finally
+				{
+					if (_os != null)
+					{
+						try
+						{
+							_os.close();
+						}
+						catch (java.io.IOException e)
+						{
+							throw new RuntimeException("Unexpected exception " + e.toString() );
+						}
+					}
+					this._releaseReply(_is);
+				}
+			}
+
+			else
+			{
+				org.omg.CORBA.portable.ServantObject _so = _servant_preinvoke( "_get_location", _opsClass);
+				if( _so == null )
+					continue;
+				TLSOperations _localServant = (TLSOperations)_so.servant;
+				java.lang.String _result;
+				try
+				{
+					_result = _localServant.location();
+					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+						((org.omg.CORBA.portable.ServantObjectExt)_so).normalCompletion();
+						return _result;
+				}
+				catch (RuntimeException re) 
+				{
+					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+						((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(re);
+					throw re;
+				}
+				catch (java.lang.Error err) 
+				{
+					if ( _so instanceof org.omg.CORBA.portable.ServantObjectExt) 
+						((org.omg.CORBA.portable.ServantObjectExt)_so).exceptionalCompletion(err);
+					throw err;
+				}
+				finally
+				{
+					_servant_postinvoke(_so);
+				}
+			}
 
 		}
 

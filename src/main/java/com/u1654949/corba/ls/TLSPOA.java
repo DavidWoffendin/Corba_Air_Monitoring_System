@@ -5,7 +5,7 @@ package com.u1654949.corba.ls;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public abstract class TLSPOA
@@ -23,7 +23,8 @@ public abstract class TLSPOA
 		m_opsHash.put ( "receive_alarm", Integer.valueOf(5));
 		m_opsHash.put ( "take_readings", Integer.valueOf(6));
 		m_opsHash.put ( "remove_tms", Integer.valueOf(7));
-		m_opsHash.put ( "get_known_stations", Integer.valueOf(8));
+		m_opsHash.put ( "_get_location", Integer.valueOf(8));
+		m_opsHash.put ( "get_known_stations", Integer.valueOf(9));
 	}
 	private String[] ids = {"IDL:com/u1654949/corba/ls/TLS:1.0"};
 	public com.u1654949.corba.ls.TLS _this()
@@ -52,8 +53,8 @@ public abstract class TLSPOA
 			case 0: // _get_name
 			{
 			_out = handler.createReply();
-			java.lang.String tmpResult12 = name();
-_out.write_string( tmpResult12 );
+			java.lang.String tmpResult13 = name();
+_out.write_string( tmpResult13 );
 				break;
 			}
 			case 1: // _get_alarm_log
@@ -101,7 +102,14 @@ _out.write_string( tmpResult12 );
 				_out.write_boolean(remove_tms(_arg0));
 				break;
 			}
-			case 8: // get_known_stations
+			case 8: // _get_location
+			{
+			_out = handler.createReply();
+			java.lang.String tmpResult14 = location();
+_out.write_string( tmpResult14 );
+				break;
+			}
+			case 9: // get_known_stations
 			{
 				_out = handler.createReply();
 				com.u1654949.corba.common.TMS_ListHelper.write(_out,get_known_stations());

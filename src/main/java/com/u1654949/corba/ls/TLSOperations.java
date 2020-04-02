@@ -5,7 +5,7 @@ package com.u1654949.corba.ls;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public interface TLSOperations
@@ -13,6 +13,7 @@ public interface TLSOperations
 	/* constants */
 	/* operations  */
 	java.lang.String name();
+	java.lang.String location();
 	com.u1654949.corba.common.Alarm[] alarm_log();
 	boolean ping();
 	com.u1654949.corba.common.Alarm[] get_current_state();

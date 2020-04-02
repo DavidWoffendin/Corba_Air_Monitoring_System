@@ -77,15 +77,15 @@ public class TMSDriver extends TMSPOA {
 		// Register the Sensor with the TLS
 		final MSData msData = tls.register_tms(zoneName);
 
+		// create and store the current metadata
+		tlsData = new TLSData(tls.name(), tls.location(), msData);
+
 		// set the station name
-		name = msData.station_name + "_" + msData.region;
+		name = msData.station_name + "_" + msData.region + "_" + tlsName;
 
 		// bind the Count object in the Naming service
 		NameComponent[] sName = nameService.to_name(name);
 		nameService.rebind(sName, server_ref);
-
-		// create and store the current metadata
-		tlsData = new TLSData(tlsName, msData);
 
 		// Log the successful connection
 		logger.info("Connected and assigned name: " + name + " by TLS.");
@@ -161,7 +161,7 @@ public class TMSDriver extends TMSPOA {
 			return;
 		}
 
-		TLSData config = new TLSData(tls.name(), tlsData.stationData);
+		TLSData config = new TLSData(tls.name(), tls.location(), tlsData.stationData);
 		tls.receive_alarm(new Alarm(config, noxReading));
 
 		currentReading = noxReading;

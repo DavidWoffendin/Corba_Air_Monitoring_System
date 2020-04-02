@@ -5,7 +5,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public abstract class MCSPOA
@@ -56,8 +56,8 @@ public abstract class MCSPOA
 			case 1: // _get_name
 			{
 			_out = handler.createReply();
-			java.lang.String tmpResult15 = name();
-_out.write_string( tmpResult15 );
+			java.lang.String tmpResult17 = name();
+_out.write_string( tmpResult17 );
 				break;
 			}
 			case 2: // ping

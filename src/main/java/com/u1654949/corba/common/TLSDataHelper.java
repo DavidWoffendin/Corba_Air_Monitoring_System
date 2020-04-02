@@ -5,7 +5,7 @@ package com.u1654949.corba.common;
  * Generated from IDL struct "TLSData".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 1, 2020, 3:30:59 PM
+ * @version generated at Apr 2, 2020, 3:12:27 PM
  */
 
 public abstract class TLSDataHelper
@@ -19,7 +19,7 @@ public abstract class TLSDataHelper
 			{
 				if (_type == null)
 				{
-					_type = org.omg.CORBA.ORB.init().create_struct_tc(com.u1654949.corba.common.TLSDataHelper.id(),"TLSData",new org.omg.CORBA.StructMember[]{new org.omg.CORBA.StructMember("tls_name", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("stationData", org.omg.CORBA.ORB.init().create_struct_tc(com.u1654949.corba.common.MSDataHelper.id(),"MSData",new org.omg.CORBA.StructMember[]{new org.omg.CORBA.StructMember("region", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("station_name", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("alarm_level", org.omg.CORBA.ORB.init().get_primitive_tc(org.omg.CORBA.TCKind.from_int(3)), null)}), null)});
+					_type = org.omg.CORBA.ORB.init().create_struct_tc(com.u1654949.corba.common.TLSDataHelper.id(),"TLSData",new org.omg.CORBA.StructMember[]{new org.omg.CORBA.StructMember("tls_name", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("tls_location", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("stationData", org.omg.CORBA.ORB.init().create_struct_tc(com.u1654949.corba.common.MSDataHelper.id(),"MSData",new org.omg.CORBA.StructMember[]{new org.omg.CORBA.StructMember("region", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("station_name", org.omg.CORBA.ORB.init().create_string_tc(0), null),new org.omg.CORBA.StructMember("alarm_level", org.omg.CORBA.ORB.init().get_primitive_tc(org.omg.CORBA.TCKind.from_int(3)), null)}), null)});
 				}
 			}
 		}
@@ -60,6 +60,7 @@ public abstract class TLSDataHelper
 	{
 		com.u1654949.corba.common.TLSData result = new com.u1654949.corba.common.TLSData();
 		result.tls_name=in.read_string();
+		result.tls_location=in.read_string();
 		result.stationData=com.u1654949.corba.common.MSDataHelper.read(in);
 		return result;
 	}
@@ -67,6 +68,8 @@ public abstract class TLSDataHelper
 	{
 		java.lang.String tmpResult5 = s.tls_name;
 out.write_string( tmpResult5 );
+		java.lang.String tmpResult6 = s.tls_location;
+out.write_string( tmpResult6 );
 		com.u1654949.corba.common.MSDataHelper.write(out,s.stationData);
 	}
 }

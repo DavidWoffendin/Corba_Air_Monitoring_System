@@ -8,22 +8,22 @@ public final class Constants {
     private Constants(){ }
 
     /**
-     * A default value for an alert level if none are previously set.
+     * A default value for an alarm level.
      */
-    public static final Integer DEFAULT_ALERT_LEVEL = 60;
+    public static final Integer DEFAULT_ALARM_LEVEL = 55;
 
     /**
-     * A default value for a warning level if none are previously set.
+     * A default value for a warning level.
      */
-    public static final Integer DEFAULT_WARNING_LEVEL = 40;
+    public static final Integer DEFAULT_WARNING_LEVEL = 45;
 
     /**
-     * The NameService constant, in order to avoid any typos when retrieving.
+     * The NameService constant.
      */
     public static final String NAME_SERVICE = "NameService";
 
     /**
-     * The name of the Monitoring Centre, to avoid typos.
+     * The name of the Monitoring Centre.
      */
     public static final String THE_MONITORING_CENTRE = "The Monitoring Centre";
 

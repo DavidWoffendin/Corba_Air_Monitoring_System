@@ -16,8 +16,10 @@ public class TLSInterface {
 
     public static void main(String[] args) throws Exception {
         System.out.println("Please enter a name for the server: ");
-        String input = scanner.next();
-        tlsDriver = new TLSDriver(args, input);
+        String name = scanner.next();
+        System.out.println("Please enter a location for the server: ");
+        String location = scanner.next();
+        tlsDriver = new TLSDriver(args, name, location);
         processInput();
     }
 

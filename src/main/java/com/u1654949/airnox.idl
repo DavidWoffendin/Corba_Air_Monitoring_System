@@ -22,6 +22,7 @@ module com {
 
                 struct TLSData {
                     string tls_name;
+                    string tls_location;
                     MSData stationData;
                 };
 
@@ -57,6 +58,7 @@ module com {
 
                 interface TLS {
                     readonly attribute string name;
+                    readonly attribute string location;
                     readonly attribute common::Alarms alarm_log;
 
                     boolean ping();

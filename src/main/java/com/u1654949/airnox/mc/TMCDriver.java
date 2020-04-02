@@ -31,9 +31,11 @@ class TMCDriver extends MCSPOA {
 
     private static final Logger logger = LoggerFactory.getLogger(MCS.class);
     private final HashSet<String> theLocalServers = new HashSet<>();
+    private final HashSet<String> serverLocations = new HashSet<>();
     private NamingContextExt nameService;
     private final List<Alarm> alarms = new ArrayList<>();
     private final ORB orb;
+    private HashSet<Agency> agencies = new HashSet<>();
 
     public TMCDriver(String[] args) throws Exception {
 
@@ -138,12 +140,22 @@ class TMCDriver extends MCSPOA {
 
         logger.info("Received alarm from sensor #{} in {} region", new_alarm.data.stationData.station_name,
                 new_alarm.data.stationData.region);
+
+        for (Agency tempAgency : agencies) {
+            if (new_alarm.data.tls_location.equals(tempAgency.getLocation())) {
+                logger.info("Alerting agency: {} on email {} about alarm in area {}", tempAgency.getName(),
+                        tempAgency.getEmail(), tempAgency.getLocation());
+            }
+        }
+
     }
 
     @Override
     public boolean register_tls_connection(String name) {
         logger.info("Successfully received connection from TLS `{}`", name);
         theLocalServers.add(name);
+        TLS tempServer = get_connected_tls(name);
+        serverLocations.add(tempServer.location());
         return true;
     }
 
@@ -153,12 +165,11 @@ class TMCDriver extends MCSPOA {
         theLocalServers.remove(name);
         return true;
     }
-    
+
     public Alarm[] get_alarms(String id) {
         return alarms.toArray(new Alarm[alarms.size()]);
     }
 
-    
     public NoxReading[][] get_local_station_readings() {
         NoxReading[][] noxReadings = new NoxReading[theLocalServers.size()][];
         int size = 0;
@@ -166,19 +177,21 @@ class TMCDriver extends MCSPOA {
             System.out.println(station);
             TLS tempServer = get_connected_tls(station);
             System.out.println(tempServer.name());
-            NoxReading[] tempReading = tempServer.take_readings();            
-            noxReadings[size] = tempReading;
+            NoxReading[] tempReadings = tempServer.take_readings();
+            noxReadings[size] = tempReadings;
             size++;
         }
         return noxReadings;
     }
 
-    
     public String[] get_known_servers() {
         return theLocalServers.toArray(new String[theLocalServers.size()]);
     }
 
-    
+    public String[] get_known_locations() {
+        return serverLocations.toArray(new String[serverLocations.size()]);
+    }
+
     public TLS get_connected_tls(String name) {
         TLS tempServer = null;
         try {
@@ -188,4 +201,35 @@ class TMCDriver extends MCSPOA {
         }
         return tempServer;
     }
+
+    public void register_agency(String name, String email, String location) {
+        Agency newAgency = new Agency(name, email, location);
+        agencies.add(newAgency);
+    }
+}
+
+class Agency {
+
+    private String name;
+    private String email;
+    private String location;
+
+    public Agency(String name, String email, String location) {
+        this.name = name;
+        this.email = email;
+        this.location = location;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public String getLocation() {
+        return this.location;
+    }
+
 }
