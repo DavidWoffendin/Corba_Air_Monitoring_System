@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -195,6 +194,7 @@ public class TLSDriver extends TLSPOA {
         } else {
             id = "1";
             regionMapping.put(region, new ConcurrentSkipListMap<String, NoxReading>() {
+                private static final long serialVersionUID = -3077591726878396738L;
                 {
                     put(id, noxReading);
                 }
@@ -389,6 +389,7 @@ public class TLSDriver extends TLSPOA {
         logger.info("Set default warning level to {}, alert level to {}", def.getWarningLevel(), def.getAlarmLevel());
 
         return new HashMap<String, Levels>() {
+            private static final long serialVersionUID = 3106482810716209290L;
             {
                 put("default", def);
             }
