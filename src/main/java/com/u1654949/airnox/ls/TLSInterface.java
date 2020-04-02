@@ -14,6 +14,13 @@ public class TLSInterface {
 
     static Scanner scanner = new Scanner(System.in);
 
+    
+    /** 
+     * Main function to launch the tls
+     * 
+     * @param args system args
+     * @throws Exception exception
+     */
     public static void main(String[] args) throws Exception {
         System.out.println("Please enter a name for the server: ");
         String name = scanner.next();

@@ -33,23 +33,21 @@ import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TLSDriver extends TLSPOA {
+public class TLSDriver extends TLSPOA {   
 
-    private static final Logger logger = LoggerFactory.getLogger(TLS.class);
-
+    private final ORB orb;
     private final ConcurrentSkipListMap<String, ConcurrentSkipListMap<String, NoxReading>> regionMapping = new ConcurrentSkipListMap<>();
     private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
     private final HashSet<String> theMonitoringStations = new HashSet<>();
+
     private static final List<Alarm> alarmLog = new ArrayList<>();
-    private NamingContextExt nameService;
+    private static final Logger logger = LoggerFactory.getLogger(TLS.class);
+
     private static HashMap<String, Levels> levels;
     private static MCS server;
     private static String name;
-    private static String location;    
-
-    Scanner scanner = new Scanner(System.in);
-
-    private final ORB orb;
+    private static String location;
+    private static NamingContextExt nameService;    
 
     public TLSDriver(String[] args, String sName, String sLocation) throws Exception {
         levels = setLevel();
@@ -126,20 +124,32 @@ public class TLSDriver extends TLSPOA {
     }
 
     /**
-     * Simple accessor method to check connection.
+     * returns the log of stored alarms
      *
-     * @return true
+     * @return Alarm[] array of all known alarms
      */
     @Override
     public Alarm[] alarm_log() {
         return alarmLog.toArray(new Alarm[alarmLog.size()]);
     }
 
+    
+    /** 
+     * Simple ping tool to check connection
+     * 
+     * @return boolean 
+     */
     @Override
     public boolean ping() {
         return true;
     }
 
+    
+    /** 
+     * Retrieve current active alarms on this tls
+     * 
+     * @return Alarm[] array of active alarms
+     */
     @Override
     public Alarm[] get_current_state() {
         List<Alarm> currentStates = new ArrayList<>();
@@ -149,12 +159,28 @@ public class TLSDriver extends TLSPOA {
         return currentStates.toArray(new Alarm[currentStates.size()]);
     }
 
+    
+    /** 
+     * Returns an array of known connected tms's
+     * 
+     * @return String[] array of known station names
+     */
     @Override
     public String[] get_known_stations() {
         return theMonitoringStations.toArray(new String[theMonitoringStations.size()]);
 
     }
 
+    
+    /** 
+     * Method to regiser a tms and its assosiated sub region
+     * This method also generates the monitoring stations unique name
+     * This also assigns the monitoring station with the default alarm levels
+     * 
+     * 
+     * @param region the region an monitoring station is occupying
+     * @return MSData msdata object the monitoring stations need to know about itself
+     */
     @Override
     public MSData register_tms(String region) {
         final NoxReading noxReading = new NoxReading();
@@ -189,6 +215,16 @@ public class TLSDriver extends TLSPOA {
         return new MSData(region, id, sensorLevels.getAlarmLevel());
     }
 
+    
+    /** 
+     * Remote function to recieve an alarm called by a monitoring station
+     * The method processes the alarm adding it to relevent arrays and hashmaps
+     * The method then works out an average of all monitoring station within a sub region
+     * if the alarm goes above the region alarm level it alerts the monitoring centre
+     * if a reading causes the avg to go below the regions alarm level it cancels the monitoring centers alarm
+     * 
+     * @param new_alarm takes an alarm from the monitoring station
+     */
     @Override
     public void receive_alarm(Alarm new_alarm) {
         logger.info("Received reading from Monitoring Station #{} in region `{}`",
@@ -243,6 +279,14 @@ public class TLSDriver extends TLSPOA {
         }
     }
 
+    
+    /** 
+     * method to remove a monitoring station from the tls
+     * allows for the unique name to be reassigned
+     * 
+     * @param data takes an msdata from a monitoring station
+     * @return boolean if successfully removed the station
+     */
     @Override
     public boolean remove_tms(MSData data) {
         logger.info("Removed Sensor #{} from region `{}`", data.station_name, data.region);
@@ -255,6 +299,13 @@ public class TLSDriver extends TLSPOA {
         return false;
     }
 
+    
+    /** 
+     * Returns an array of alarms from all connected monitoring stations
+     * individuall pings all connected stations
+     * 
+     * @return NoxReading[] array of reading from all connected monitoring stations
+     */
     @Override
     public NoxReading[] take_readings() {
         NoxReading[] noxReadings = new NoxReading[theMonitoringStations.size()];
@@ -269,24 +320,52 @@ public class TLSDriver extends TLSPOA {
         return noxReadings;
     }
 
+    
+    /** 
+     * Function to activate a connected monitoring station
+     * 
+     * @param name of a monitoring station
+     * @return boolean true if successful
+     */
     public boolean activateTMS(String name) {
         TMS tempServer = get_connected_tms(name);
         boolean status = tempServer.activate();
         return status;
     }
 
+    
+    /** 
+     * Function to deactivate a connected monitoring station
+     * 
+     * @param name of a monitoring station
+     * @return boolean true if successful
+     */
     public boolean deactivateTMS(String name) {
         TMS tempServer = get_connected_tms(name);
         boolean status = tempServer.deactivate();
         return status;
     }
 
+    
+    /** 
+     * Function to reset a connected monitoring station
+     * 
+     * @param name of a monitoring station
+     * @return boolean true if successful
+     */
     public boolean resetTMS(String name) {
         TMS tempServer = get_connected_tms(name);
         boolean status = tempServer.reset();
         return status;
     }
 
+    
+    /** 
+     * Returns a retrieved tms object from a given name 
+     * 
+     * @param name of a connected tms
+     * @return TMS object of a connected tms
+     */
     public TMS get_connected_tms(String name) {
         TMS tempServer = null;
         try {
@@ -298,6 +377,12 @@ public class TLSDriver extends TLSPOA {
         return tempServer;
     }
 
+    
+    /** 
+     * Createds a hashmap of allowed alarm levels
+     * 
+     * @return HashMap<String, Levels>
+     */
     private HashMap<String, Levels> setLevel() {
         final Levels def = new Levels(Constants.DEFAULT_ALARM_LEVEL, Constants.DEFAULT_WARNING_LEVEL);
 
@@ -310,11 +395,22 @@ public class TLSDriver extends TLSPOA {
         };
     }
 
+    
+    /** 
+     * returns the given levels are a region
+     * 
+     * @param levels hashmap of levels
+     * @param zone name of zone
+     * @return Levels the given levels
+     */
     public static Levels getLevelsForRegion(HashMap<String, Levels> levels, String zone) {
         return !levels.containsKey(zone) ? levels.get("default") : levels.get(zone);
     }
 }
 
+/**
+ * Levels class to hold alarm level data
+ */
 class Levels {
 
     private Integer alarm_level;
@@ -324,24 +420,44 @@ class Levels {
         // no-op
     }
 
+    /** 
+     * @param alarm_level int to set alarm level  
+     * @param warning_level int to set warning level
+     */
     public Levels(int alarm_level, int warning_level){
         this.alarm_level = alarm_level;
         this.warning_level = warning_level;
     }
 
+    
+    /** 
+     * @return Integer of current alarm level
+     */
     public Integer getAlarmLevel(){
         return alarm_level;
     }
 
+    
+    /** 
+     * @return Integer of current warning level
+     */
     public Integer getWarningLevel(){
         return warning_level;
     }
 
+    
+    /** 
+     * @param alarm_level sets the alarm level
+     */
     @JsonSetter("alarm_level")
     public void setAlarmLevel(int alarm_level){
         this.alarm_level = alarm_level;
     }
 
+    
+    /** 
+     * @param warning_level set the warning level
+     */
     @JsonSetter("warning_level")
     public void setWarningLevel(int warning_level){
         this.warning_level = warning_level;

@@ -3,7 +3,7 @@ package com.u1654949.airnox.ms;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.u1654949.airnox.common.Constants;
+import com.u1654949.airnox.Constants;
 import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.MSData;
 import com.u1654949.corba.common.NoxReading;
@@ -13,6 +13,7 @@ import com.u1654949.corba.ls.TLSHelper;
 import com.u1654949.corba.ms.TMS;
 import com.u1654949.corba.ms.TMSHelper;
 import com.u1654949.corba.ms.TMSPOA;
+
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
@@ -24,20 +25,19 @@ import org.slf4j.LoggerFactory;
 
 public class TMSDriver extends TMSPOA {
 
+	private final ORB orb;
 	private final List<NoxReading> noxReadingLog = new ArrayList<>();
 
 	private static final Logger logger = LoggerFactory.getLogger(TMS.class);
+
 	private static TLS tls;
-
-	private TLSData tlsData;
-	private final ORB orb;
-
-	private NoxReading currentReading;
-	private Boolean status = true;
-	private String name;
+	private static TLSData tlsData;
+	private static NoxReading currentReading;
+	private static Boolean status = true;
+	private static String name;
 
 	public TMSDriver(String[] args, String tlsName, String zoneName) throws Exception {
-
+		// Logs the beginning of the connection process
 		logger.info("Sensor of zone {} connecting to LMS: {}", zoneName, tlsName);
 
 		// Initialize the ORB
@@ -105,16 +105,35 @@ public class TMSDriver extends TMSPOA {
 		});
 	}
 
+	
+	
+	/** 
+	 * Function to return the station name
+	 * 
+	 * @return String
+	 */
 	@Override
 	public String station_name() {
 		return name;
 	}
 
+	
+	/** 
+	 * Function to return the station region
+	 * 
+	 * @return String
+	 */
 	@Override
 	public String location() {
 		return tlsData.stationData.region;
 	}
 
+	
+	/** 
+	 * Function to deactivate the station
+	 * 
+	 * @return boolean
+	 */
 	@Override
 	public boolean deactivate() {
 		if (status) {
@@ -125,6 +144,12 @@ public class TMSDriver extends TMSPOA {
 		return false;
 	}
 
+	
+	/** 
+	 * Function to activate the station
+	 * 
+	 * @return boolean
+	 */
 	@Override
 	public boolean activate() {
 		if (!status) {
@@ -135,6 +160,12 @@ public class TMSDriver extends TMSPOA {
 		return false;
 	}
 
+	
+	/** 
+	 * Function to reset the station log
+	 * 
+	 * @return boolean
+	 */
 	@Override
 	public boolean reset() {
 		currentReading = null;
@@ -144,6 +175,12 @@ public class TMSDriver extends TMSPOA {
 
 	}
 
+	
+	/** 
+	 * Function to send reading to the connected tls
+	 * 
+	 * @param measurement
+	 */
 	@Override
 	public void send_alarm(int measurement) {
 		if (!status) {
@@ -174,11 +211,23 @@ public class TMSDriver extends TMSPOA {
 		}
 	}
 
+	
+	/** 
+	 * Function to return the last reading
+	 * 
+	 * @return NoxReading
+	 */
 	@Override
 	public NoxReading get_reading() {
 		return currentReading;
 	}
 
+	
+	/** 
+	 * Function to return the log of readings
+	 * 
+	 * @return NoxReading[]
+	 */
 	@Override
 	public NoxReading[] get_reading_log() {
 		return noxReadingLog.toArray(new NoxReading[noxReadingLog.size()]);

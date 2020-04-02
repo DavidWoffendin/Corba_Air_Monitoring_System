@@ -1,5 +1,10 @@
 package com.u1654949.airnox.mc;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import com.u1654949.airnox.Constants;
 import com.u1654949.corba.common.Alarm;
 import com.u1654949.corba.common.NoxReading;
 import com.u1654949.corba.common.TLSData;
@@ -9,33 +14,28 @@ import com.u1654949.corba.mc.MCS;
 import com.u1654949.corba.mc.MCSHelper;
 import com.u1654949.corba.mc.MCSPOA;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import com.u1654949.airnox.common.Constants;
-
-import org.omg.CORBA.*;
+import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
-import org.omg.PortableServer.*;
 import org.omg.PortableServer.POA;
-
+import org.omg.PortableServer.POAHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class TMCDriver extends MCSPOA {
 
     private static final Logger logger = LoggerFactory.getLogger(MCS.class);
+    
     private final HashSet<String> theLocalServers = new HashSet<>();
-    private final HashSet<String> serverLocations = new HashSet<>();
-    private NamingContextExt nameService;
+    private final HashSet<String> serverLocations = new HashSet<>();    
     private final List<Alarm> alarms = new ArrayList<>();
     private final ORB orb;
-    private HashSet<Agency> agencies = new HashSet<>();
+
+    private static NamingContextExt nameService;
+    private static HashSet<Agency> agencies = new HashSet<>();
 
     public TMCDriver(String[] args) throws Exception {
 
@@ -99,6 +99,14 @@ class TMCDriver extends MCSPOA {
         return true;
     }
 
+    
+    /** 
+     * This function takes a tls data object and cancels any alarms linked to it
+     * This function is called and a tls wished to cancel an alarm
+     * This function also informs any agencys that the alarm is cancelled
+     * 
+     * @param tls_data from tls station
+     */
     @Override
     public void cancel_alarm(TLSData tls_data) {
 
@@ -116,9 +124,23 @@ class TMCDriver extends MCSPOA {
             logger.info("Removed alarm from sensor #{} in {} region", tls_data.stationData.station_name,
                     tls_data.stationData.region);
         }
+        for (Agency tempAgency : agencies) {
+            if (tls_data.tls_location.equals(tempAgency.getLocation())) {
+                logger.info("Alerting agency: {} on email {} about alarm in area {} has been cancelled", tempAgency.getName(),
+                        tempAgency.getEmail(), tempAgency.getLocation());
+            }
+        }
 
     }
 
+    
+    /** 
+     * This method is called by a tls to provide a tmc with an alarm
+     * The function stores the alarm if it is already not accounted for
+     * The function then notifies any agencies register to the area
+     * 
+     * @param new_alarm from tls
+     */
     @Override
     public void receive_alarm(Alarm new_alarm) {
         boolean stored = false;
@@ -150,6 +172,13 @@ class TMCDriver extends MCSPOA {
 
     }
 
+    
+    /** 
+     * Function adds a tls to the stored list of tls's
+     * 
+     * @param name of tls
+     * @return boolean if successful or not
+     */
     @Override
     public boolean register_tls_connection(String name) {
         logger.info("Successfully received connection from TLS `{}`", name);
@@ -159,6 +188,13 @@ class TMCDriver extends MCSPOA {
         return true;
     }
 
+    
+    /** 
+     * Function removes a tls from the stored list of tls's
+     * 
+     * @param name of tls
+     * @return boolean if successful or not
+     */
     @Override
     public boolean remove_tls_connection(String name) {
         logger.info("Removed connection from TLS `{}`", name);
@@ -166,10 +202,23 @@ class TMCDriver extends MCSPOA {
         return true;
     }
 
-    public Alarm[] get_alarms(String id) {
+    
+    /** 
+     * Returns all current alarms
+     * 
+     * @return Alarm[] returns an array of alarms
+     */
+    public Alarm[] get_alarms() {
         return alarms.toArray(new Alarm[alarms.size()]);
     }
 
+    
+    /** 
+     * Function polls all local servers to poll all their monitoring station
+     * the result is an array of arrays of nox readings from each local server
+     * 
+     * @return NoxReading[][] of all collected nox readings
+     */
     public NoxReading[][] get_local_station_readings() {
         NoxReading[][] noxReadings = new NoxReading[theLocalServers.size()][];
         int size = 0;
@@ -184,14 +233,32 @@ class TMCDriver extends MCSPOA {
         return noxReadings;
     }
 
+    
+    /** 
+     * Returns all know servers
+     * 
+     * @return String[] of known servers
+     */
     public String[] get_known_servers() {
         return theLocalServers.toArray(new String[theLocalServers.size()]);
     }
 
+    
+    /** 
+     * Returns all know locations
+     * 
+     * @return String[] of locations
+     */
     public String[] get_known_locations() {
         return serverLocations.toArray(new String[serverLocations.size()]);
     }
 
+    /** 
+     * Returns a retrieved TLS object from a given name 
+     * 
+     * @param name of a connected tms
+     * @return TLS object of a connected tms
+     */
     public TLS get_connected_tls(String name) {
         TLS tempServer = null;
         try {
@@ -202,32 +269,62 @@ class TMCDriver extends MCSPOA {
         return tempServer;
     }
 
+    
+    /** 
+     * Register agency function and add to array of agencys
+     * 
+     * @param name
+     * @param email
+     * @param location
+     */
     public void register_agency(String name, String email, String location) {
         Agency newAgency = new Agency(name, email, location);
         agencies.add(newAgency);
     }
 }
 
+/**
+ * Agency Object for storing agency data
+ */
 class Agency {
 
     private String name;
     private String email;
     private String location;
 
+    /** 
+     * Agency Constructor
+     * 
+     * @param name of agency
+     * @param email of agency
+     * @param location of agency
+     */
     public Agency(String name, String email, String location) {
         this.name = name;
         this.email = email;
         this.location = location;
     }
 
+    
+    /** 
+     * @return String name of agency
+     */
     public String getName() {
         return this.name;
     }
 
+    
+    /** 
+     * @return String email of agency
+     */
     public String getEmail() {
         return this.email;
     }
 
+    
+    /** 
+     * @return String location of agency
+     */
     public String getLocation() {
         return this.location;
     }

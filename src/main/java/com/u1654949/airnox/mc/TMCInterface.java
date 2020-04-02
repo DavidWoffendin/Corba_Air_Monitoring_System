@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
-import com.u1654949.airnox.common.Constants;
+import com.u1654949.airnox.Constants;
 import com.u1654949.corba.common.NoxReading;
 
 public class TMCInterface {
@@ -14,6 +14,13 @@ public class TMCInterface {
     static Scanner scanner = new Scanner(System.in);
     static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
 
+    
+    /** 
+     * Main function to launch the tmc
+     * 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         tmcDriver = new TMCDriver(args);
         processInput();

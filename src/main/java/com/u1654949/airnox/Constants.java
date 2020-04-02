@@ -1,4 +1,4 @@
-package com.u1654949.airnox.common;
+package com.u1654949.airnox;
 
 public final class Constants {
 

@@ -11,6 +11,13 @@ public class TMSInterface {
 
     static Scanner scanner = new Scanner(System.in);
 
+    
+    /** 
+     * Main function to launch the tms
+     * 
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         System.out.println("Please enter the local station name: ");
         String tlsName = scanner.next();
