@@ -39,11 +39,11 @@ public class TLSDriver extends TLSPOA {
     private final ConcurrentSkipListMap<String, Alarm> alarmStates = new ConcurrentSkipListMap<>();
     private final HashSet<String> theMonitoringStations = new HashSet<>();
 
-    private static final List<Alarm> alarmLog = new ArrayList<>();
+    private static final List<Alarm> readingLog = new ArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(TLS.class);
 
     private static HashMap<String, Levels> levels;
-    private static MCS server;
+    private static MCS tmc;
     private static String name;
     private static String location;
     private static NamingContextExt nameService;    
@@ -88,18 +88,32 @@ public class TLSDriver extends TLSPOA {
         TLS server_ref = TLSHelper.narrow(ref);
 
         // resolve the server object reference in the Naming service
-        server = MCSHelper.narrow(nameService.resolve_str(Constants.THE_MONITORING_CENTRE));
+        tmc = MCSHelper.narrow(nameService.resolve_str(Constants.THE_MONITORING_CENTRE));
 
         // bind the Count object in the Naming service
         NameComponent[] countName = nameService.to_name(name);
         nameService.rebind(countName, server_ref);
 
         // test out the RMC connection
-        if (!server.register_tls_connection(name)) {
+        if (!tmc.register_tls_connection(name)) {
             throw new IllegalStateException("TMC Connection failed!");
         } else {
             logger.info("Made successful connection to TMC");
         }
+
+        // Shutdown hook to remove tms from tls
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				try {
+					if (!tmc.remove_tls_connection(name)) {
+						logger.error("Error: unable to unregister from TMC!");
+					}
+				} catch (Exception e) {
+					logger.error("Error: unable to unregister from TMC!");
+				}
+			}
+		});
     }
 
     /**
@@ -129,7 +143,7 @@ public class TLSDriver extends TLSPOA {
      */
     @Override
     public Alarm[] alarm_log() {
-        return alarmLog.toArray(new Alarm[alarmLog.size()]);
+        return readingLog.toArray(new Alarm[readingLog.size()]);
     }
 
     
@@ -231,7 +245,7 @@ public class TLSDriver extends TLSPOA {
                 new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
         ConcurrentSkipListMap<String, NoxReading> region = regionMapping.get(new_alarm.data.stationData.region);
         region.put(new_alarm.data.stationData.station_name, new_alarm.reading);
-        alarmLog.add(new_alarm);
+        readingLog.add(new_alarm);
         int alarm_level = getLevelsForRegion(levels, new_alarm.data.stationData.region).getAlarmLevel();
 
         if (new_alarm.reading.reading_value > alarm_level) {
@@ -254,10 +268,10 @@ public class TLSDriver extends TLSPOA {
 
         try {
             logger.info("ping");
-            server.ping();
+            tmc.ping();
             logger.info("pong");
         } catch (Exception e) {
-            System.err.println(server.name() + "` is unreachable!");
+            System.err.println(tmc.name() + "` is unreachable!");
             return;
         }
 
@@ -265,12 +279,12 @@ public class TLSDriver extends TLSPOA {
             logger.warn("Average above alarm level in region `{}`, forwarding to TMC...",
                     new_alarm.data.stationData.region);
             new_alarm.reading.reading_value = avg;
-            server.receive_alarm(new_alarm);
+            tmc.receive_alarm(new_alarm);
             alarmStates.put(new_alarm.data.stationData.region,
                     new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg,
                             new_alarm.data.stationData.region, new_alarm.data.stationData.station_name, name)));
         } else {
-            server.cancel_alarm(new TLSData(name, location, new_alarm.data.stationData));
+            tmc.cancel_alarm(new TLSData(name, location, new_alarm.data.stationData));
 
             if (alarmStates.containsKey(new_alarm.data.stationData.region)) {
                 logger.info("Removed alarm state for region `{}`", new_alarm.data.stationData.region);
@@ -292,10 +306,10 @@ public class TLSDriver extends TLSPOA {
         logger.info("Removed Sensor #{} from region `{}`", data.station_name, data.region);
         if (regionMapping.containsKey(data.region)) {
             regionMapping.get(data.region).remove(data.station_name);
+            String stationName = data.station_name + "_" + data.region + "_" + name;
+            theMonitoringStations.remove(stationName);
             return true;
         }
-        String stationName = data.station_name + "_" + data.region;
-        theMonitoringStations.remove(stationName);
         return false;
     }
 

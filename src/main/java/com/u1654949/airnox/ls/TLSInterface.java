@@ -37,6 +37,7 @@ public class TLSInterface {
         System.out.println("- name, return the name of the server");
         System.out.println("- log, return the log of all received alarms");
         System.out.println("- poll, return the last reading of all connected TMS's");
+        System.out.println("- stations, returns all connected stations");
         System.out.println("- activate, activates a sensor");
         System.out.println("- deactivate, deactivate a sensor");
         System.out.println("- reset, reset a sensor");
@@ -87,9 +88,17 @@ public class TLSInterface {
                 System.out.println("\n");
                 continue;
             }
+            if (input.equals("stations")) {
+                String[] stations = tlsDriver.get_known_stations();
+                System.out.println("Current connected stations are:");
+                for (String station : stations) {
+                    System.out.println(station);
+                }
+                continue;
+            }
             if (input.equals("activate")) {
                 String[] stations = tlsDriver.get_known_stations();
-                System.out.println("Current connect stations are:");
+                System.out.println("Current connected stations are:");
                 for (String station : stations) {
                     System.out.println(station);
                 }
@@ -105,7 +114,7 @@ public class TLSInterface {
             }
             if (input.equals("deactivate")) {
                 String[] stations = tlsDriver.get_known_stations();
-                System.out.println("Current connect stations are:");
+                System.out.println("Current connected stations are:");
                 for (String station : stations) {
                     System.out.println(station);
                 }
@@ -121,7 +130,7 @@ public class TLSInterface {
             }
             if (input.equals("reset")) {
                 String[] stations = tlsDriver.get_known_stations();
-                System.out.println("Current connect stations are:");
+                System.out.println("Current connected stations are:");
                 for (String station : stations) {
                     System.out.println(station);
                 }
