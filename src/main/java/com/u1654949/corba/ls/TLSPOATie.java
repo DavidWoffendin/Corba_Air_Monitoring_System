@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "TLS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 2, 2020, 3:12:27 PM
+ * @version generated at Apr 4, 2020, 12:42:21 PM
  */
 
 public class TLSPOATie
@@ -60,11 +60,6 @@ public class TLSPOATie
 	public com.u1654949.corba.common.Alarm[] alarm_log()
 	{
 		return _delegate.alarm_log();
-	}
-
-	public boolean ping()
-	{
-		return _delegate.ping();
 	}
 
 	public com.u1654949.corba.common.Alarm[] get_current_state()

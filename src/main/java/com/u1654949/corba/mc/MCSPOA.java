@@ -5,7 +5,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 2, 2020, 3:12:27 PM
+ * @version generated at Apr 4, 2020, 12:42:21 PM
  */
 
 public abstract class MCSPOA
@@ -17,10 +17,9 @@ public abstract class MCSPOA
 	{
 		m_opsHash.put ( "register_tls_connection", Integer.valueOf(0));
 		m_opsHash.put ( "_get_name", Integer.valueOf(1));
-		m_opsHash.put ( "ping", Integer.valueOf(2));
-		m_opsHash.put ( "remove_tls_connection", Integer.valueOf(3));
-		m_opsHash.put ( "receive_alarm", Integer.valueOf(4));
-		m_opsHash.put ( "cancel_alarm", Integer.valueOf(5));
+		m_opsHash.put ( "remove_tls_connection", Integer.valueOf(2));
+		m_opsHash.put ( "receive_alarm", Integer.valueOf(3));
+		m_opsHash.put ( "cancel_alarm", Integer.valueOf(4));
 	}
 	private String[] ids = {"IDL:com/u1654949/corba/mc/MCS:1.0"};
 	public com.u1654949.corba.mc.MCS _this()
@@ -60,27 +59,21 @@ public abstract class MCSPOA
 _out.write_string( tmpResult17 );
 				break;
 			}
-			case 2: // ping
-			{
-				_out = handler.createReply();
-				_out.write_boolean(ping());
-				break;
-			}
-			case 3: // remove_tls_connection
+			case 2: // remove_tls_connection
 			{
 				java.lang.String _arg0=_input.read_string();
 				_out = handler.createReply();
 				_out.write_boolean(remove_tls_connection(_arg0));
 				break;
 			}
-			case 4: // receive_alarm
+			case 3: // receive_alarm
 			{
 				com.u1654949.corba.common.Alarm _arg0=com.u1654949.corba.common.AlarmHelper.read(_input);
 				_out = handler.createReply();
 				receive_alarm(_arg0);
 				break;
 			}
-			case 5: // cancel_alarm
+			case 4: // cancel_alarm
 			{
 				com.u1654949.corba.common.TLSData _arg0=com.u1654949.corba.common.TLSDataHelper.read(_input);
 				_out = handler.createReply();

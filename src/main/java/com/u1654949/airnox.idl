@@ -61,8 +61,6 @@ module com {
                     readonly attribute string location;
                     readonly attribute common::Alarms alarm_log;
 
-                    boolean ping();
-
                     common::Alarms get_current_state();
                     common::TMS_List get_known_stations();
                     common::MSData register_tms(in string region);
@@ -78,9 +76,7 @@ module com {
 
                 interface MCS {
                     readonly attribute string name;
-
-                    boolean ping();
-
+                    
                     void cancel_alarm(in common::TLSData tls_data);
                     void receive_alarm(in common::Alarm new_alarm);
 

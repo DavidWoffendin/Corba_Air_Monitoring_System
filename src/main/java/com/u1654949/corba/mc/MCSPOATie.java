@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 2, 2020, 3:12:27 PM
+ * @version generated at Apr 4, 2020, 12:42:21 PM
  */
 
 public class MCSPOATie
@@ -60,11 +60,6 @@ public class MCSPOATie
 	public java.lang.String name()
 	{
 		return _delegate.name();
-	}
-
-	public boolean ping()
-	{
-		return _delegate.ping();
 	}
 
 	public boolean remove_tls_connection(java.lang.String name)

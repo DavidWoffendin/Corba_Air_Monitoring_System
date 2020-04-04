@@ -87,18 +87,6 @@ class TMCDriver extends MCSPOA {
     public String name() {
         return Constants.THE_MONITORING_CENTRE;
     }
-
-    /**
-     * Simply returns true to the caller. Used simply as a connection test between
-     * components.
-     *
-     * @return true
-     */
-    @Override
-    public boolean ping() {
-        return true;
-    }
-
     
     /** 
      * This function takes a tls data object and cancels any alarms linked to it
@@ -222,10 +210,8 @@ class TMCDriver extends MCSPOA {
     public NoxReading[][] get_local_station_readings() {
         NoxReading[][] noxReadings = new NoxReading[theLocalServers.size()][];
         int size = 0;
-        for (String station : theLocalServers) {
-            System.out.println(station);
-            TLS tempServer = get_connected_tls(station);
-            System.out.println(tempServer.name());
+        for (String station : theLocalServers) {            
+            TLS tempServer = get_connected_tls(station);            
             NoxReading[] tempReadings = tempServer.take_readings();
             noxReadings[size] = tempReadings;
             size++;

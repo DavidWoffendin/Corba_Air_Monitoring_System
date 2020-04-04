@@ -4,7 +4,7 @@ package com.u1654949.corba.mc;
  * Generated from IDL interface "MCS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 2, 2020, 3:12:27 PM
+ * @version generated at Apr 4, 2020, 12:42:21 PM
  */
 
 public final class MCSHolder	implements org.omg.CORBA.portable.Streamable{

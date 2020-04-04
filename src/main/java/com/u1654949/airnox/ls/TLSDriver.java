@@ -145,18 +145,6 @@ public class TLSDriver extends TLSPOA {
     public Alarm[] alarm_log() {
         return readingLog.toArray(new Alarm[readingLog.size()]);
     }
-
-    
-    /** 
-     * Simple ping tool to check connection
-     * 
-     * @return boolean 
-     */
-    @Override
-    public boolean ping() {
-        return true;
-    }
-
     
     /** 
      * Retrieve current active alarms on this tls
@@ -266,15 +254,6 @@ public class TLSDriver extends TLSPOA {
         avg = Math.round((avg / size) * 100) / 100;
         logger.info("" + avg);
 
-        try {
-            logger.info("ping");
-            tmc.ping();
-            logger.info("pong");
-        } catch (Exception e) {
-            System.err.println(tmc.name() + "` is unreachable!");
-            return;
-        }
-
         if ((avg >= alarm_level && size > 2) || (avg > alarm_level && size > 1)) {
             logger.warn("Average above alarm level in region `{}`, forwarding to TMC...",
                     new_alarm.data.stationData.region);
@@ -326,8 +305,7 @@ public class TLSDriver extends TLSPOA {
         int size = 0;
         for (String station : theMonitoringStations) {
             TMS tempServer = get_connected_tms(station);
-            NoxReading tempReading = tempServer.get_reading();
-            System.out.println(tempReading.reading_value);
+            NoxReading tempReading = tempServer.get_reading();            
             noxReadings[size] = tempReading;
             size++;
         }

@@ -189,14 +189,6 @@ public class TMSDriver extends TMSPOA {
 		}
 		NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement, tlsData.stationData.region,
 				tlsData.stationData.station_name, tlsData.tls_name);
-		try {
-			logger.info("ping");
-			tls.ping();
-			logger.info("pong");
-		} catch (Exception e) {
-			System.err.println("TLS `" + tlsData.tls_name + "` is unreachable!");
-			return;
-		}
 
 		TLSData config = new TLSData(tls.name(), tls.location(), tlsData.stationData);
 		tls.receive_alarm(new Alarm(config, noxReading));
