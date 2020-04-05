@@ -52,7 +52,7 @@ public class TMSInterface {
             if (input.equals("reading")) {
                 System.out.println("Please enter a value");
                 String input2 = scanner.next();
-                if (input2.matches("\\d{1,2}")) {
+                if (input2.matches("\\d{1,3}")) {
                     tmsDriver.send_alarm(Integer.parseInt(input2));
                 } else {
                     System.err.println("Invalid measurement provided!");

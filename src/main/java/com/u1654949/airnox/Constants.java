@@ -10,12 +10,12 @@ public final class Constants {
     /**
      * A default value for an alarm level.
      */
-    public static final Integer DEFAULT_ALARM_LEVEL = 55;
+    public static final Integer DEFAULT_ALARM_LEVEL = 100;
 
     /**
      * A default value for a warning level.
      */
-    public static final Integer DEFAULT_WARNING_LEVEL = 45;
+    public static final Integer DEFAULT_WARNING_LEVEL = 50;
 
     /**
      * The NameService constant.

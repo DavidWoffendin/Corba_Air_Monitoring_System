@@ -231,41 +231,42 @@ public class TLSDriver extends TLSPOA {
     public void receive_alarm(Alarm new_alarm) {
         logger.info("Received reading from Monitoring Station #{} in region `{}`",
                 new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
-        ConcurrentSkipListMap<String, NoxReading> region = regionMapping.get(new_alarm.data.stationData.region);
-        region.put(new_alarm.data.stationData.station_name, new_alarm.reading);
-        readingLog.add(new_alarm);
+
         int alarm_level = getLevelsForRegion(levels, new_alarm.data.stationData.region).getAlarmLevel();
+        ConcurrentSkipListMap<String, NoxReading> region = regionMapping.get(new_alarm.data.stationData.region);
+        boolean alert = false;
 
         if (new_alarm.reading.reading_value > alarm_level) {
             logger.warn("Registered alarm {} from Monitoring Station #{} in region {}", new_alarm.reading.reading_value,
                     new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+            for (Map.Entry<String, NoxReading> regionMap : region.entrySet()) {
+                if (regionMap.getValue().reading_value > alarm_level) {
+                    long time = (regionMap.getValue().time - new_alarm.reading.time)/1000;
+                    if (time < 30) {
+                        System.out.println("Alerting Monitoring Centre");
+                        alert = true;
+                    }
+                }     
+            }
         } else {
             logger.info("Registered reading {} from Monitoring Station #{} in region {}",
                     new_alarm.reading.reading_value, new_alarm.data.stationData.station_name,
                     new_alarm.data.stationData.region);
         }
 
-        int avg = 0;
-        for (Map.Entry<String, NoxReading> regionMap : region.entrySet()) {
-            avg += regionMap.getValue().reading_value;
-        }
-        int size = region.size();
-        System.out.println(size);
-        avg = Math.round((avg / size) * 100) / 100;
-        logger.info("" + avg);
-
-        if ((avg >= alarm_level && size > 2) || (avg > alarm_level && size > 1)) {
-            logger.warn("Average above alarm level in region `{}`, forwarding to TMC...",
-                    new_alarm.data.stationData.region);
-            new_alarm.reading.reading_value = avg;
+        readingLog.add(new_alarm);
+        region.put(new_alarm.data.stationData.station_name, new_alarm.reading);  
+        
+        if ((alert)) {            
+            logger.warn("Multiple alarms found in region: `{}`, forwarding to TMC...",
+                    new_alarm.data.stationData.region);            
             tmc.receive_alarm(new_alarm);
             alarmStates.put(new_alarm.data.stationData.region,
-                    new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, avg,
+                    new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, new_alarm.reading.reading_value,
                             new_alarm.data.stationData.region, new_alarm.data.stationData.station_name, name)));
-        } else {
-            tmc.cancel_alarm(new TLSData(name, location, new_alarm.data.stationData));
-
+        } else {            
             if (alarmStates.containsKey(new_alarm.data.stationData.region)) {
+                tmc.cancel_alarm(new TLSData(name, location, new_alarm.data.stationData));
                 logger.info("Removed alarm state for region `{}`", new_alarm.data.stationData.region);
                 alarmStates.remove(new_alarm.data.stationData.region);
             }
