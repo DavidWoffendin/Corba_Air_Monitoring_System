@@ -47,8 +47,6 @@ module com {
                     boolean activate();
                     boolean reset();
 
-                    void send_alarm(in long measurement);
-
                     common::NoxReading  get_reading();
                     common::Nox_Readings get_reading_log();
                 };

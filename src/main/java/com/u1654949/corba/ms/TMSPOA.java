@@ -5,7 +5,7 @@ package com.u1654949.corba.ms;
  * Generated from IDL interface "TMS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 4, 2020, 12:42:21 PM
+ * @version generated at Apr 8, 2020, 11:56:17 AM
  */
 
 public abstract class TMSPOA
@@ -19,10 +19,9 @@ public abstract class TMSPOA
 		m_opsHash.put ( "activate", Integer.valueOf(1));
 		m_opsHash.put ( "deactivate", Integer.valueOf(2));
 		m_opsHash.put ( "get_reading", Integer.valueOf(3));
-		m_opsHash.put ( "send_alarm", Integer.valueOf(4));
-		m_opsHash.put ( "get_reading_log", Integer.valueOf(5));
-		m_opsHash.put ( "reset", Integer.valueOf(6));
-		m_opsHash.put ( "_get_location", Integer.valueOf(7));
+		m_opsHash.put ( "get_reading_log", Integer.valueOf(4));
+		m_opsHash.put ( "reset", Integer.valueOf(5));
+		m_opsHash.put ( "_get_location", Integer.valueOf(6));
 	}
 	private String[] ids = {"IDL:com/u1654949/corba/ms/TMS:1.0"};
 	public com.u1654949.corba.ms.TMS _this()
@@ -73,26 +72,19 @@ _out.write_string( tmpResult10 );
 				com.u1654949.corba.common.NoxReadingHelper.write(_out,get_reading());
 				break;
 			}
-			case 4: // send_alarm
-			{
-				int _arg0=_input.read_long();
-				_out = handler.createReply();
-				send_alarm(_arg0);
-				break;
-			}
-			case 5: // get_reading_log
+			case 4: // get_reading_log
 			{
 				_out = handler.createReply();
 				com.u1654949.corba.common.Nox_ReadingsHelper.write(_out,get_reading_log());
 				break;
 			}
-			case 6: // reset
+			case 5: // reset
 			{
 				_out = handler.createReply();
 				_out.write_boolean(reset());
 				break;
 			}
-			case 7: // _get_location
+			case 6: // _get_location
 			{
 			_out = handler.createReply();
 			java.lang.String tmpResult11 = location();

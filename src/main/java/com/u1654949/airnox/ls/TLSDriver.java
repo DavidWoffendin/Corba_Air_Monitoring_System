@@ -46,8 +46,18 @@ public class TLSDriver extends TLSPOA {
     private static MCS tmc;
     private static String name;
     private static String location;
-    private static NamingContextExt nameService;    
+    private static NamingContextExt nameService;       
 
+    /**
+     * This code is based upon the client/server code provided by Gary Allen
+     * 
+     * Name: Gary Allen
+     * Source: https://github.com/GaryAllenGit/Jacorb_NamingServiceDemo/blob/master/src/CountPortableServer.java
+     * Commit: 0559c3c
+     * 
+     * @param args program arguments passed from client
+     * @throws Exception exception for orb
+     */
     public TLSDriver(String[] args, String sName, String sLocation) throws Exception {
         levels = setLevel();
         

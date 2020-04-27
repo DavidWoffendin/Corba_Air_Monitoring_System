@@ -37,6 +37,17 @@ class TMCDriver extends MCSPOA {
     private static NamingContextExt nameService;
     private static HashSet<Agency> agencies = new HashSet<>();
 
+
+    /**
+     * This code is based upon the client/server code provided by Gary Allen
+     * 
+     * Name: Gary Allen
+     * Source: https://github.com/GaryAllenGit/Jacorb_NamingServiceDemo/blob/master/src/CountPortableServer.java
+     * Commit: 0559c3c
+     * 
+     * @param args program arguments passed from client
+     * @throws Exception exception for orb
+     */
     public TMCDriver(String[] args) throws Exception {
 
         // create and initialise the ORB
@@ -98,6 +109,7 @@ class TMCDriver extends MCSPOA {
     @Override
     public void cancel_alarm(TLSData tls_data) {
 
+        // checks to see if the alarm exsists before removal
         int size = alarms.size();
         for (int i = 0; i < size; i++) {
             Alarm alarm = alarms.get(i);
@@ -108,10 +120,13 @@ class TMCDriver extends MCSPOA {
             }
         }
 
+        // alerts the operater that the alarm has been cancelled
         if (alarms.size() == size - 1) {
             logger.info("Removed alarm from sensor #{} in {} region", tls_data.stationData.station_name,
                     tls_data.stationData.region);
         }
+
+        // alerts any agency the alarm for a region has been cancelled
         for (Agency tempAgency : agencies) {
             if (tls_data.tls_location.equals(tempAgency.getLocation())) {
                 logger.info("Alerting agency: {} on email {} about alarm in area {} has been cancelled", tempAgency.getName(),
@@ -133,24 +148,26 @@ class TMCDriver extends MCSPOA {
     public void receive_alarm(Alarm new_alarm) {
         boolean stored = false;
 
+        // Checks for exsisting alarms
         for (int i = 0, j = alarms.size(); i < j; i++) {
-
             Alarm storedAlert = alarms.get(i);
-
             if (storedAlert.data.equals(new_alarm.data)) {
                 alarms.set(i, new_alarm);
                 stored = true;
                 break;
             }
         }
-
+        
+        // If it does not exsists adds it to the list of alarms
         if (!stored) {
             alarms.add(new_alarm);
         }
 
+        // Alerts theres a new alarm
         logger.info("Received alarm from sensor #{} in {} region", new_alarm.data.stationData.station_name,
                 new_alarm.data.stationData.region);
 
+        // Checks if there is an agency registered to that location
         for (Agency tempAgency : agencies) {
             if (new_alarm.data.tls_location.equals(tempAgency.getLocation())) {
                 logger.info("Alerting agency: {} on email {} about alarm in area {}", tempAgency.getName(),
@@ -210,6 +227,7 @@ class TMCDriver extends MCSPOA {
     public NoxReading[][] get_local_station_readings() {
         NoxReading[][] noxReadings = new NoxReading[theLocalServers.size()][];
         int size = 0;
+        // itterates over all local servers
         for (String station : theLocalServers) {            
             TLS tempServer = get_connected_tls(station);            
             NoxReading[] tempReadings = tempServer.take_readings();
@@ -248,6 +266,7 @@ class TMCDriver extends MCSPOA {
     public TLS get_connected_tls(String name) {
         TLS tempServer = null;
         try {
+            // Attempts to gather a local server connection object
             tempServer = TLSHelper.narrow(nameService.resolve_str(name));
         } catch (NotFound | CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName e) {
             logger.error("nameServiceObj = null" + e);
@@ -257,7 +276,7 @@ class TMCDriver extends MCSPOA {
 
     
     /** 
-     * Register agency function and add to array of agencys
+     * Register agency function and adds it to an array of agencies
      * 
      * @param name
      * @param email

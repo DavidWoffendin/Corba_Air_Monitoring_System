@@ -36,6 +36,16 @@ public class TMSDriver extends TMSPOA {
 	private static Boolean status = true;
 	private static String name;
 
+	/**
+     * This code is based upon the client/server code provided by Gary Allen
+     * 
+     * Name: Gary Allen
+     * Source: https://github.com/GaryAllenGit/Jacorb_NamingServiceDemo/blob/master/src/CountPortableServer.java
+     * Commit: 0559c3c
+     * 
+     * @param args program arguments passed from client
+     * @throws Exception exception for orb
+     */
 	public TMSDriver(String[] args, String tlsName, String zoneName) throws Exception {
 		// Logs the beginning of the connection process
 		logger.info("Sensor of zone {} connecting to LMS: {}", zoneName, tlsName);
@@ -180,9 +190,8 @@ public class TMSDriver extends TMSPOA {
 	 * Function to send reading to the connected tls
 	 * 
 	 * @param measurement
-	 */
-	@Override
-	public void send_alarm(int measurement) {
+	 */	
+	public void send_Reading(int measurement) {
 		if (!status) {
 			System.err.println("System is disconnected");
 			return;

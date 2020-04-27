@@ -6,7 +6,7 @@ import org.omg.PortableServer.POA;
  * Generated from IDL interface "TMS".
  *
  * @author JacORB IDL compiler V 3.9
- * @version generated at Apr 4, 2020, 12:42:21 PM
+ * @version generated at Apr 8, 2020, 11:56:17 AM
  */
 
 public class TMSPOATie
@@ -70,11 +70,6 @@ public class TMSPOATie
 	public com.u1654949.corba.common.NoxReading get_reading()
 	{
 		return _delegate.get_reading();
-	}
-
-	public void send_alarm(int measurement)
-	{
-_delegate.send_alarm(measurement);
 	}
 
 	public com.u1654949.corba.common.NoxReading[] get_reading_log()
