@@ -179,7 +179,6 @@ public class TLSDriver extends TLSPOA {
     @Override
     public String[] get_known_stations() {
         return theMonitoringStations.toArray(new String[theMonitoringStations.size()]);
-
     }
 
     
@@ -197,23 +196,21 @@ public class TLSDriver extends TLSPOA {
         final NoxReading noxReading = new NoxReading();
         final String id;
 
+        // assign tms to region or generate new one if required
         if (regionMapping.containsKey(region)) {
             ConcurrentSkipListMap<String, NoxReading> regionMap = regionMapping.get(region);
-
             id = (regionMap.size() + 1) + "";
-
             regionMap.put(id, noxReading);
         } else {
             id = "1";
             regionMapping.put(region, new ConcurrentSkipListMap<String, NoxReading>() {
                 private static final long serialVersionUID = -3077591726878396738L;
-                {
-                    put(id, noxReading);
-                }
+                { put(id, noxReading); }
             });
         }
         logger.info("Added Sensor #{} to {}", id, region);
 
+        // assign the sensor with the corrrect alarm levels
         Levels sensorLevels;
         if (levels.containsKey(region)) {
             sensorLevels = levels.get(region);
@@ -241,18 +238,20 @@ public class TLSDriver extends TLSPOA {
     public void receive_alarm(Alarm new_alarm) {
         logger.info("Received reading from Monitoring Station #{} in region `{}`",
                 new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
-
         int alarm_level = getLevelsForRegion(levels, new_alarm.data.stationData.region).getAlarmLevel();
         ConcurrentSkipListMap<String, NoxReading> region = regionMapping.get(new_alarm.data.stationData.region);
         boolean alert = false;
 
+        // check is reading is above alarm level
         if (new_alarm.reading.reading_value > alarm_level) {
             logger.warn("Registered alarm {} from Monitoring Station #{} in region {}", new_alarm.reading.reading_value,
                     new_alarm.data.stationData.station_name, new_alarm.data.stationData.region);
+            // check if any other alarm in sub region has alerted
             for (Map.Entry<String, NoxReading> regionMap : region.entrySet()) {
                 if (regionMap.getValue().reading_value > alarm_level) {
                     long time = (regionMap.getValue().time - new_alarm.reading.time)/1000;
-                    if (time < 30) {
+                    // check if alert time is within 30 seconds
+                    if (time < 20) {
                         System.out.println("Alerting Monitoring Centre");
                         alert = true;
                     }
@@ -267,6 +266,7 @@ public class TLSDriver extends TLSPOA {
         readingLog.add(new_alarm);
         region.put(new_alarm.data.stationData.station_name, new_alarm.reading);  
         
+        // if alarm is within time limit, record it and alert monitoring centre
         if ((alert)) {            
             logger.warn("Multiple alarms found in region: `{}`, forwarding to TMC...",
                     new_alarm.data.stationData.region);            
@@ -274,7 +274,8 @@ public class TLSDriver extends TLSPOA {
             alarmStates.put(new_alarm.data.stationData.region,
                     new Alarm(new_alarm.data, new NoxReading(new_alarm.reading.time, new_alarm.reading.reading_value,
                             new_alarm.data.stationData.region, new_alarm.data.stationData.station_name, name)));
-        } else {            
+        } else { 
+            // if alarm isnt within time limit just log it           
             if (alarmStates.containsKey(new_alarm.data.stationData.region)) {
                 tmc.cancel_alarm(new TLSData(name, location, new_alarm.data.stationData));
                 logger.info("Removed alarm state for region `{}`", new_alarm.data.stationData.region);
@@ -294,6 +295,7 @@ public class TLSDriver extends TLSPOA {
     @Override
     public boolean remove_tms(MSData data) {
         logger.info("Removed Sensor #{} from region `{}`", data.station_name, data.region);
+        // remove tms from the region map
         if (regionMapping.containsKey(data.region)) {
             regionMapping.get(data.region).remove(data.station_name);
             String stationName = data.station_name + "_" + data.region + "_" + name;
@@ -314,6 +316,7 @@ public class TLSDriver extends TLSPOA {
     public NoxReading[] take_readings() {
         NoxReading[] noxReadings = new NoxReading[theMonitoringStations.size()];
         int size = 0;
+        // for loop to connect and retrieve readings from all registered stations
         for (String station : theMonitoringStations) {
             TMS tempServer = get_connected_tms(station);
             NoxReading tempReading = tempServer.get_reading();            
@@ -372,6 +375,7 @@ public class TLSDriver extends TLSPOA {
     public TMS get_connected_tms(String name) {
         TMS tempServer = null;
         try {
+            // attempts to retrieve tms object
             tempServer = TMSHelper.narrow(nameService.resolve_str(name));
         } catch (CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName
                 | org.omg.CosNaming.NamingContextPackage.NotFound e) {
@@ -387,10 +391,9 @@ public class TLSDriver extends TLSPOA {
      * @return HashMap<String, Levels>
      */
     private HashMap<String, Levels> setLevel() {
+        // creates new levels object at default level
         final Levels def = new Levels(Constants.DEFAULT_ALARM_LEVEL, Constants.DEFAULT_WARNING_LEVEL);
-
         logger.info("Set default warning level to {}, alert level to {}", def.getWarningLevel(), def.getAlarmLevel());
-
         return new HashMap<String, Levels>() {
             private static final long serialVersionUID = 3106482810716209290L;
             {

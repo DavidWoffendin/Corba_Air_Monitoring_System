@@ -192,16 +192,21 @@ public class TMSDriver extends TMSPOA {
 	 * @param measurement
 	 */	
 	public void send_Reading(int measurement) {
+		// check is system is disconnected
 		if (!status) {
 			System.err.println("System is disconnected");
 			return;
 		}
+		// generate a noxReading object from measurement
 		NoxReading noxReading = new NoxReading(System.currentTimeMillis(), measurement, tlsData.stationData.region,
 				tlsData.stationData.station_name, tlsData.tls_name);
 
+		// generated tls object to send to add to alarm
 		TLSData config = new TLSData(tls.name(), tls.location(), tlsData.stationData);
+		// send an alarm to tls
 		tls.receive_alarm(new Alarm(config, noxReading));
 
+		// Determine whether the alarm is dangerous or not and add alarm to log.
 		currentReading = noxReading;
 		noxReadingLog.add(noxReading);
 		if (measurement > tlsData.stationData.alarm_level) {
